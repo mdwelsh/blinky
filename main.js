@@ -131,6 +131,7 @@ function editStripStart(id) {
     return;
   }
 
+  $("#editorNameField").val(config.name);
   $("#editorModeSelect").val(config.mode);
   $("#editorSpeedSlider").slider("value", config.speed);
   $("#editorBrightnessSlider").slider("value", config.brightness);
@@ -149,6 +150,7 @@ function editStripDone() {
   }
 
   // Extract values from modal.
+  var name = $("#editorNameField").val();
   var mode = $("#editorModeSelect").find(':selected').text();
   var speed = $("#editorSpeedSlider").slider("value");
   var brightness = $("#editorBrightnessSlider").slider("value");
@@ -156,6 +158,7 @@ function editStripDone() {
   var green = $("#green").slider("value");
   var blue = $("#blue").slider("value");
   var newConfig = {
+    name: name,
     mode: mode,
     speed: speed,
     brightness: brightness,
@@ -326,7 +329,6 @@ function updateStrip(id, stripdata) {
   } else {
     $(e).find("#nextMode").addClass('pending');
   }
-
   $(e).find('#ip').text(stripdata.ip);
   var m = new moment(strip.lastCheckin);
   dateString = m.format('MMM DD, h:mm:ss a') + ' (' + m.fromNow() + ')';
@@ -380,6 +382,16 @@ function createStrip(id) {
 
   var tbody = $('<tbody/>')
     .appendTo(tbl);
+
+  r0 = $('<tr/>')
+    .appendTo(tbody);
+  $('<td/>')
+    .text('Name')
+    .appendTo(r0);
+  $('<td/>')
+    .attr('id', 'name')
+    .text('unknown')
+    .appendTo(r0);
 
   r0 = $('<tr/>')
     .appendTo(tbody);
@@ -529,6 +541,7 @@ function configUpdate(snapshot) {
     return;
   }
   var e = strip.stripElem;
+  $(e).find("#name").text(nextConfig.name);
   strip.nextConfig = nextConfig;
   var nme = $(e).find("#nextMode");
   $(nme).text(configToString(nextConfig));
