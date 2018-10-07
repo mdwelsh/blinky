@@ -22,6 +22,7 @@ var allStrips = {};
 // List of supported modes.
 var allmodes = [
   'off',
+  'random',
   'wipe',
   'theater',
   'bounce',
