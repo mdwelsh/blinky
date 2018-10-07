@@ -40,8 +40,9 @@ var logRef = null;
 // Initialize click handlers.
 $('#login').off('click');
 $('#login').click(doLogin);
-$('#userinfo').off('click');
-$('#userinfo').click(logout);
+$('#logout').off('click');
+$('#logout').click(logout);
+$('#enableAll').change(enableAllToggled);
 
 initEditor();
 setup();
@@ -62,7 +63,7 @@ function initEditor() {
     orientation: "horizontal",
     range: "min",
     min: 0,
-    max: 1000,
+    max: 200,
     value: 100,
     slide: refreshSwatch,
     change: refreshSwatch
@@ -81,6 +82,15 @@ function initEditor() {
     range: "min",
     max: 255,
     value: 127,
+    slide: refreshSwatch,
+    change: refreshSwatch
+  });
+  $("#editorColorChangeSlider").slider({
+    orientation: "horizontal",
+    range: "min",
+    min: 0,
+    max: 100,
+    value: 0,
     slide: refreshSwatch,
     change: refreshSwatch
   });
@@ -127,7 +137,10 @@ function editStripStart(id) {
   }
   console.log(config);
 
-  if (config.mode == null || config.speed == null || config.brightness == null) {
+  if (config.mode == null ||
+    config.speed == null ||
+    config.brightness == null ||
+    config.colorChange == null) {
     return;
   }
 
@@ -135,6 +148,7 @@ function editStripStart(id) {
   $("#editorModeSelect").val(config.mode);
   $("#editorSpeedSlider").slider("value", config.speed);
   $("#editorBrightnessSlider").slider("value", config.brightness);
+  $("#editorColorChangeSlider").slider("value", config.colorChange);
   $("#red").slider("value", config.red);
   $("#green").slider("value", config.green);
   $("#blue").slider("value", config.blue);
@@ -154,6 +168,7 @@ function editStripDone() {
   var mode = $("#editorModeSelect").find(':selected').text();
   var speed = $("#editorSpeedSlider").slider("value");
   var brightness = $("#editorBrightnessSlider").slider("value");
+  var colorChange = $("#editorColorChangeSlider").slider("value");
   var red = $("#red").slider("value");
   var green = $("#green").slider("value");
   var blue = $("#blue").slider("value");
@@ -162,6 +177,7 @@ function editStripDone() {
     mode: mode,
     speed: speed,
     brightness: brightness,
+    colorChange: colorChange,
     red: red,
     green: green,
     blue: blue,
@@ -196,6 +212,8 @@ function refreshSwatch() {
   $("#speedIndicator").text(speed);
   var brightness = $("#editorBrightnessSlider").slider("value");
   $("#brightnessIndicator").text(brightness);
+  var colorChange = $("#editorColorChangeSlider").slider("value");
+  $("#colorChangeIndicator").text(colorChange);
 }
 
 // Set up initial UI elements.
@@ -247,9 +265,9 @@ function showError(elem, msg) {
 
 // Show the login button.
 function showLoginButton() {
-  $('#postlogin').hide();
-  $('#userphoto').hide();
   $('#login').show();
+  $('#postlogin').hide();
+  $('#logout').hide();
 }
 
 function doLogin() {
@@ -273,10 +291,9 @@ function doLogin() {
 function showFullUI() {
   // Update header.
   $('#login').hide();
-  $('#userphoto')
-     .html("<img class='userphoto' src='" + currentUser().photoURL + "'>");
-  $('#userphoto').show();
+  $('#logout').show();
 
+  $('#about').hide();
   $('#postlogin').hide('blind');
 
   $("#log").empty();
@@ -349,6 +366,7 @@ function createStrip(id) {
     dbRef: dbRef,
     curConfig: {
       mode: "unknown",
+      enabled: false,
     },
     nextConfig: {
       mode: "unknown",
@@ -523,10 +541,12 @@ function deleteStrip(id) {
 }
 
 function configToString(config) {
-  var s = "mode: " + config.mode +
+  var s = "enabled: " + config.enabled +
+    ", mode: " + config.mode +
     ", speed: " + config.speed +
     ", bright: " + config.brightness +
-    ", color: (" + config.red + "," + config.green + "," + config.blue + ")";
+    ", color: (" + config.red + "," + config.green + "," + config.blue + ")" +
+    ", color change: " + config.colorChange;
   return s;
 }
 
@@ -545,10 +565,6 @@ function configUpdate(snapshot) {
   strip.nextConfig = nextConfig;
   var nme = $(e).find("#nextMode");
   $(nme).text(configToString(nextConfig));
-  console.log('Next config:');
-  console.log(strip.nextConfig);
-  console.log('Current config:');
-  console.log(strip.curConfig);
   if (JSON.stringify(strip.curConfig) === JSON.stringify(nextConfig)) {
     $(nme).removeClass('pending');
   } else {
@@ -559,6 +575,9 @@ function configUpdate(snapshot) {
 
 // Set the strip's config in the database.
 function setConfig(stripid, config) {
+  // Here we grab the global enabled flag and set it in the config.
+  config.enabled = $('#enableAll').is(':checked');
+
   console.log('Setting config of ' + stripid + ' to ' + JSON.stringify(config));
   var strip = allStrips[stripid];
   if (strip == null) {
@@ -635,3 +654,17 @@ function logout() {
 firebase.auth().onAuthStateChanged(function(user) {
   setup();
 });
+
+function enableAllToggled() {
+  var cb = $('#enableAll');
+  console.log(cb);
+  if(cb.is(':checked')) {
+    console.log('------- CHECKED');
+  } else {
+    console.log('------- NOT CHECKED');
+  } 
+  $.each(allStrips, function(id, s) {
+    // This has the side effect of setting the enabled/disabled flag.
+    setConfig(id, s.nextConfig);
+  });
+}

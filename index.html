@@ -52,24 +52,62 @@
 </style>
 
 </head>
-
 <body>
+
 <div class="container" id="header">
   <div class="row justify-content-between" id="headercontents">
     <div class="col title">
       <span><img height="50px" src="blinky.png"></img> Blinky</span>
     </div>
     <div class="col" id="userinfo">
-      <button type="button" class="btn btn-primary" id="login">Login</button>
-      <span id="userphoto"></span>
+       <div class="btn-group" role="group">
+       <a class="btn btn-link" href="http://teamsidney.com/blinky">About</a>
+       <button type="button" class="btn btn-primary btn-raised" id="login">Login</button>
+       <button type="button" class="btn btn-primary btn-raised" id="logout">Logout</button>
+     </div>
     </div>
   </div>
 </div>
+
 <div class="container" id="contents">
+
+  <div id="about">
+    <p>
+    <span class="titlesmall">
+      Welcome to Blinky!
+    </span>
+    <p>
+    Blinky is a web controller for a cloud-controlled LED light display,
+    developed by <a href="http://teamsidney.com/">Team Sidney Enterprises</a>.
+    Press the <span style="text-transform: uppercase;">login</span> button above
+    to access the control panel. Note that only authorized users can access this page.
+    <ul>
+      <li><a href="http://teamsidney.com/blinky">Learn more</a>
+      <li>Source code for the
+        <a href="https://github.com/mdwelsh/blinky">web controller</a> and
+        <a href="https://github.com/mdwelsh/sidney-projects/tree/master/arduino/Blinky">device firmware</a>
+        on GitHub
+    </ul>
+  </div>
+
   <div id="postlogin">
+    <div id="global" class="container">
+      <div class="switch">
+        <label>
+          <input id="enableAll" type="checkbox" checked>Enable all</input>
+        </label>
+      </div>
+    </div>
+
     <div id="dberror" class="errormsg"></div>
     <div id="striplist" class="listgroup"></div>
-    <div id="log" class="listgroup"></div>
+    <div id="logcollapse" class="container">
+      <button class="btn btn-primary btn-raised" type="button"
+        data-toggle="collapse" data-target="#log" aria-expanded="false" aria-controls="log">
+        Show log
+      </button>
+      <div id="log" class="listgroup collapse"></div>
+    </div>
     <div id="controls" class="controls">
       <button type="button" class="btn btn-primary bmd-btn-fab" id="addStrip">
         <i class="material-icons">add</i>
@@ -111,6 +149,10 @@
         <div id="editorBrightness">
           <div>Brightness <span id="brightnessIndicator">??</span></div>
           <div id="editorBrightnessSlider"></div>
+        </div>
+        <div id="editorColorChange">
+          <div>Color change <span id="colorChangeIndicator">??</span></div>
+          <div id="editorColorChangeSlider"></div>
         </div>
         <div id="editorColor">
           <div>Color</div>
