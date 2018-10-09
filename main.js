@@ -35,8 +35,12 @@ var allmodes = [
   'comet',
 ];
 
-// Reference to log DB entry.
+// Global variables to be maintained in Firebase.
+var globals = {};
+
+// Database references.
 var logRef = null;
+var globalsRef = null;
 
 // Initialize click handlers.
 $('#login').off('click');
@@ -138,13 +142,6 @@ function editStripStart(id) {
   }
   console.log(config);
 
-  if (config.mode == null ||
-    config.speed == null ||
-    config.brightness == null ||
-    config.colorChange == null) {
-    return;
-  }
-
   $("#editorNameField").val(config.name);
   $("#editorModeSelect").val(config.mode);
   $("#editorSpeedSlider").slider("value", config.speed);
@@ -223,6 +220,7 @@ function setup() {
     // Not logged in yet.
     showLoginButton();
     logRef = null;
+    globalsRef = null;
 
   } else {
     showFullUI();
@@ -233,7 +231,21 @@ function setup() {
 
     logRef = firebase.database().ref('log/');
     logRef.on('child_added', newLogEntry, dbErrorCallback);
+
+    globalsRef = firebase.database().ref('globals/');
+    globalsRef.on('value', globalsChanged, dbErrorCallback);
   }
+}
+
+function globalsChanged(snapshot) {
+  globals = snapshot.val();
+  console.log('Received new globals:');
+  console.log(globals);
+
+  // Update UI.
+  $('#enableAll').prop('checked', globals.allEnabled);
+
+  // Note that any changes to the configs is done when the button is toggled.
 }
 
 function currentUser() {
@@ -371,6 +383,7 @@ function createStrip(id) {
     },
     nextConfig: {
       mode: "unknown",
+      enabled: false,
     },
   };
   allStrips[id] = strip;
@@ -542,6 +555,9 @@ function deleteStrip(id) {
 }
 
 function configToString(config) {
+  if (config == undefined || config == null) {
+    return "not yet known";
+  }
   var s = "enabled: " + config.enabled +
     ", mode: " + config.mode +
     ", speed: " + config.speed +
@@ -556,13 +572,15 @@ function configUpdate(snapshot) {
   console.log('configUpdate called for key ' + snapshot.key);
   var stripid = snapshot.key;
   var nextConfig = snapshot.val();
+  console.log('got nextConfig:');
+  console.log(nextConfig);
+
   var strip = allStrips[stripid];
   if (strip == null) {
     console.log('configUpdate bailing out as strip is not known yet: ' + stripid);
     return;
   }
   var e = strip.stripElem;
-  $(e).find("#name").text(nextConfig.name);
   strip.nextConfig = nextConfig;
   var nme = $(e).find("#nextMode");
   $(nme).text(configToString(nextConfig));
@@ -572,6 +590,7 @@ function configUpdate(snapshot) {
     $(nme).addClass('pending');
   }
   $(nme).effect('highlight');
+  $(e).find("#name").text(nextConfig.name);
 }
 
 // Set the strip's config in the database.
@@ -656,16 +675,27 @@ firebase.auth().onAuthStateChanged(function(user) {
   setup();
 });
 
+// Callback when "Enable all" checkbox is toggled.
 function enableAllToggled() {
   var cb = $('#enableAll');
-  console.log(cb);
-  if(cb.is(':checked')) {
-    console.log('------- CHECKED');
-  } else {
-    console.log('------- NOT CHECKED');
-  } 
-  $.each(allStrips, function(id, s) {
-    // This has the side effect of setting the enabled/disabled flag.
-    setConfig(id, s.nextConfig);
+
+  // Write new globals to the database.
+  var newGlobals = {
+    allEnabled: cb.is(':checked'),
+  };
+  globalsRef.set(newGlobals)
+    .catch(function(error) {
+      showError($('#dberror'), error.message);
+    });
+
+  // We don't want to modify the strip configs in the database update callback,
+  // since that is also triggered when we first load the page (and we may not
+  // have knowledge of the config yet). Here we update
+  // the config for each strip that we know about with the new value.
+  $.each(allStrips, function(id, strip) {
+    var cfg = strip.nextConfig;
+    strip.nextConfig.enabled = newGlobals.allEnabled;
+    setConfig(id, strip.nextConfig);
   });
+
 }
