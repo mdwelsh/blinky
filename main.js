@@ -358,6 +358,7 @@ function updateStrip(id, stripdata) {
   console.log("Setting strip config to: " + JSON.stringify(stripdata.config));
   strip.curConfig = stripdata.config;
   strip.ip = stripdata.ip;
+  strip.rssi = stripdata.rssi;
   strip.lastCheckin = new Date(stripdata.timestamp);
 
   // Now update the UI.
@@ -376,6 +377,7 @@ function updateStrip(id, stripdata) {
     $(e).find("#nextMode").addClass('pending');
   }
   $(e).find('#ip').text(stripdata.ip);
+  $(e).find('#rssi').text(stripdata.rssi + ' dBm');
   var m = new moment(strip.lastCheckin);
   dateString = m.format('MMM DD, h:mm:ss a') + ' (' + m.fromNow() + ')';
   $(e).find('#checkin').text(dateString);
@@ -458,6 +460,16 @@ function createStrip(id) {
     .appendTo(r0);
   $('<td/>')
     .attr('id', 'ip')
+    .text('unknown')
+    .appendTo(r0);
+  
+  r0 = $('<tr/>')
+    .appendTo(tbody);
+  $('<td/>')
+    .text('RSSI')
+    .appendTo(r0);
+  $('<td/>')
+    .attr('id', 'rssi')
     .text('unknown')
     .appendTo(r0);
 
