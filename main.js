@@ -360,6 +360,7 @@ function updateStrip(id, stripdata) {
   strip.ip = stripdata.ip;
   strip.rssi = stripdata.rssi;
   strip.lastCheckin = new Date(stripdata.timestamp);
+  strip.version = stripdata.version;
 
   // Now update the UI.
   var e = strip.stripElem;
@@ -377,6 +378,7 @@ function updateStrip(id, stripdata) {
     $(e).find("#nextMode").addClass('pending');
   }
   $(e).find('#ip').text(stripdata.ip);
+  $(e).find('#version').text(stripdata.version);
   $(e).find('#rssi').text(stripdata.rssi + ' dBm');
   var m = new moment(strip.lastCheckin);
   dateString = m.format('MMM DD, h:mm:ss a') + ' (' + m.fromNow() + ')';
@@ -450,6 +452,16 @@ function createStrip(id) {
     .appendTo(r0);
   $('<td/>')
     .attr('id', 'checkin')
+    .text('unknown')
+    .appendTo(r0);
+
+  r0 = $('<tr/>')
+    .appendTo(tbody);
+  $('<td/>')
+    .text('Firmware version')
+    .appendTo(r0);
+  $('<td/>')
+    .attr('id', 'version')
     .text('unknown')
     .appendTo(r0);
 
