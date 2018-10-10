@@ -38,9 +38,13 @@ var allmodes = [
 // Global variables to be maintained in Firebase.
 var globals = {};
 
+// Known firmware versions.
+var firmwareVersions = {};
+
 // Database references.
 var logRef = null;
 var globalsRef = null;
+var firmwareVersionsRef = null;
 
 // Initialize click handlers.
 $('#login').off('click');
@@ -134,6 +138,16 @@ function editStripStart(id) {
   }
   $("#editorStripId").text(id);
 
+  // Populate firmware version dropdown.
+  var fwselect = $("#editorFirmwareSelect");
+  fwselect.empty();
+  for (var fw in firmwareVersions) {
+    console.log('Adding fw to editor: ' + fw);
+    $('<option/>')
+      .text(fw)
+      .appendTo(fwselect);
+  }
+
   // Prefer initializing dialog to nextConfig if it exists, otherwise
   // fall back to curConfig.
   var config = null;
@@ -175,6 +189,7 @@ function editStripDone() {
 
   // Extract values from modal.
   var name = $("#editorNameField").val();
+  var version = $("#editorFirmwareSelect").find(':selected').text();
   var mode = $("#editorModeSelect").find(':selected').text();
   var speed = $("#editorSpeedSlider").slider("value");
   var brightness = $("#editorBrightnessSlider").slider("value");
@@ -184,6 +199,7 @@ function editStripDone() {
   var green = $("#green").slider("value");
   var blue = $("#blue").slider("value");
   var newConfig = {
+    version: version,
     name: name,
     mode: mode,
     speed: speed,
@@ -237,6 +253,7 @@ function setup() {
     showLoginButton();
     logRef = null;
     globalsRef = null;
+    firmwareVersionsRef = null;
 
   } else {
     showFullUI();
@@ -250,9 +267,14 @@ function setup() {
 
     globalsRef = firebase.database().ref('globals/');
     globalsRef.on('value', globalsChanged, dbErrorCallback);
+
+    firmwareVersionsRef = firebase.database().ref('firmware/');
+    firmwareVersionsRef.on('child_added', newFirmwareVersion, dbErrorCallback);
+    firmwareVersionsRef.on('child_changed', newFirmwareVersion, dbErrorCallback);
   }
 }
 
+// Called when globals/ DB entry changes.
 function globalsChanged(snapshot) {
   globals = snapshot.val();
   console.log('Received new globals:');
@@ -262,6 +284,15 @@ function globalsChanged(snapshot) {
   $('#enableAll').prop('checked', globals.allEnabled);
 
   // Note that any changes to the configs is done when the button is toggled.
+}
+
+// Called when firmware/ DB entry changes.
+function newFirmwareVersion(snapshot) {
+  var fwVersion = snapshot.key;
+  var fwData = snapshot.val();
+  console.log('Adding new firmware version: ' + fwVersion);
+  console.log(fwData);
+  firmwareVersions[fwVersion] = fwData;
 }
 
 function currentUser() {
