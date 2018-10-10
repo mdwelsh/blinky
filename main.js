@@ -99,6 +99,15 @@ function initEditor() {
     slide: refreshSwatch,
     change: refreshSwatch
   });
+  $("#editorNumPixelsSlider").slider({
+    orientation: "horizontal",
+    range: "min",
+    min: 100,
+    max: 200,
+    value: 120,
+    slide: refreshSwatch,
+    change: refreshSwatch
+  });
   refreshSwatch();
 
   // Handle editor completion.
@@ -147,6 +156,9 @@ function editStripStart(id) {
   $("#editorSpeedSlider").slider("value", config.speed);
   $("#editorBrightnessSlider").slider("value", config.brightness);
   $("#editorColorChangeSlider").slider("value", config.colorChange);
+  if (config.numPixels != undefined) {
+    $("#editorNumPixelsSlider").slider("value", config.numPixels);
+  }
   $("#red").slider("value", config.red);
   $("#green").slider("value", config.green);
   $("#blue").slider("value", config.blue);
@@ -167,6 +179,7 @@ function editStripDone() {
   var speed = $("#editorSpeedSlider").slider("value");
   var brightness = $("#editorBrightnessSlider").slider("value");
   var colorChange = $("#editorColorChangeSlider").slider("value");
+  var numPixels = $("#editorNumPixelsSlider").slider("value");
   var red = $("#red").slider("value");
   var green = $("#green").slider("value");
   var blue = $("#blue").slider("value");
@@ -176,6 +189,7 @@ function editStripDone() {
     speed: speed,
     brightness: brightness,
     colorChange: colorChange,
+    numPixels: numPixels,
     red: red,
     green: green,
     blue: blue,
@@ -212,6 +226,8 @@ function refreshSwatch() {
   $("#brightnessIndicator").text(brightness);
   var colorChange = $("#editorColorChangeSlider").slider("value");
   $("#colorChangeIndicator").text(colorChange);
+  var numPixels = $("#editorNumPixelsSlider").slider("value");
+  $("#numPixelsIndicator").text(numPixels);
 }
 
 // Set up initial UI elements.
@@ -558,7 +574,9 @@ function configToString(config) {
   if (config == undefined || config == null) {
     return "not yet known";
   }
-  var s = "enabled: " + config.enabled +
+  var s = 
+    config.numPixels + " pixels, " +
+    "enabled: " + config.enabled +
     ", mode: " + config.mode +
     ", speed: " + config.speed +
     ", bright: " + config.brightness +
