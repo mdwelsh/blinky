@@ -197,6 +197,7 @@ function editStripStart(id) {
 
   $("#editorNameField").val(config.name);
   $("#editorModeSelect").val(config.mode);
+  $("#editorFirmwareSelect").val(config.version);
   $("#editorSpeedSlider").slider("value", config.speed);
   $("#editorBrightnessSlider").slider("value", config.brightness);
   $("#editorColorChangeSlider").slider("value", config.colorChange);
