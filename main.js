@@ -478,10 +478,26 @@ function createStrip(id) {
   var cardbody = $('<div/>')
     .addClass('card-body')
     .appendTo(strip.stripElem);
-  $('<h5/>')
+  var cardtitle = $('<div/>')
     .addClass('card-title')
-    .text(id)
     .appendTo(cardbody);
+
+  var s = $('<span/>')
+    .addClass('h5')
+    .text(id)
+    .appendTo(cardtitle);
+
+  var f = $('<form/>').appendTo(cardtitle);
+  var s = $('<div/>')
+    .addClass('switch')
+    .appendTo(f);
+  var lbl = $('<label/>')
+     .text('Enabled')
+     .appendTo(s);
+  var inp = $('<input/>')
+    .attr('type', 'checkbox')
+    .prop('checked', true)
+    .appendTo(lbl);
 
   // Status area.
   var statusArea = $('<div/>')
