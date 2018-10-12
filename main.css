@@ -1,19 +1,10 @@
 /* https://coolors.co/d7dedc-cfcfcd-9a879d-7a3b69-563440 */
 /* https://coolors.co/eeeeff-7f7caf-9fb4c7-28587b-9fb798 */
 
-.btn.btn-primary {
-  background-color: #28587B !important;
-}
-.btn.btn-success {
-  background-color: #7F7CAF !important;
-}
-
-.switch label .bmd-switch-track {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.26) 0%, rgba(0, 0, 0, 0.26) 50%, #b7bacb 50%, #b7bacb 100%);
-}
-.switch label input:checked + .bmd-switch-track::after {
-  left: calc(100% - 1.25rem);
-  background-color: #28587b !important;
+body {
+  background-color: #f4f4f4;
+  font-family: Roboto;
+  font-size: 12px;
 }
 
 #header {
@@ -177,36 +168,16 @@
   justify-content: space-between;
 }
 
-.strip-id {
-/*  font-family: Varela Round;
-  color: #ffffff;
-  font-size: 20px;
-  padding: 10px;
-  */
-}
-
-.strip-status {
-/*  font-family: Roboto;
-  color: #808080;
-  font-size: 12px;
-  */
-}
-
-.strip-select {
-  float: right;
-/*
-  font-family: Varela Round;
-  color: #ffffff;
-  font-size: 20px;
-  background: #606060;
-  */
-  text-decoration: none;
-  width: 100px;
-  height: 100%;
+.strip-card {
+  width: 90%;
 }
 
 /* Editor UI */
-#red, #green, #blue, #editorSpeedSlider, #editorBrightnessSlider, #editorColorChangeSlider {
+#editor {
+  width: 80%;
+}
+
+#red, #green, #blue, #editorSpeedSlider, #editorBrightnessSlider, #editorColorChangeSlider, #editorNumPixelsSlider {
   width: 80%;
   margin: 15px;
 }

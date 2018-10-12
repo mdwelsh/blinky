@@ -51,7 +51,15 @@ $('#login').off('click');
 $('#login').click(doLogin);
 $('#logout').off('click');
 $('#logout').click(logout);
+$('#showLogButton').click(function () {
+  $("#log").toggle();
+});
 $('#enableAll').change(enableAllToggled);
+$('#testButton').click(function() {
+  //  var d = document.getElementById('testDialog');
+  var d = $('#testDialog').get()[0];
+  d.showModal();
+});
 
 initEditor();
 setup();
@@ -147,8 +155,19 @@ function initEditor() {
   // Handle editor completion.
   $('#editorSave').click(function (e) {
     console.log('Editor save clicked');
-    $("#editor").modal('hide');
-    editStripDone();
+    $("#editor").get()[0].close();
+    var id = $("#editorStripId").text();
+    editStripDone(id);
+  });
+  $('#editorSaveAll').click(function (e) {
+    console.log('Editor save clicked');
+    $("#editor").get()[0].close();
+    $.each(allStrips, function(id, strip) {
+      editStripDone(id);
+    });
+  });
+  $('#editorCancel').click(function (e) {
+    $("#editor").get()[0].close();
   });
 
   // Handle deletion completion.
@@ -209,8 +228,7 @@ function editStripStart(id) {
 }
 
 // Called when editing done.
-function editStripDone() {
-  var id = $("#editorStripId").text();
+function editStripDone(id) {
   var strip = allStrips[id];
   if (strip == null) {
     console.log("Can't edit unknown strip: " + id);
@@ -425,7 +443,7 @@ function updateStrip(id, stripdata) {
 
   // Now update the UI.
   var e = strip.stripElem;
-  $(e).effect('highlight');
+  $(e).find('#strip-title').effect('highlight');
 
   var mode = "unknown";
   if (stripdata.config != null && stripdata.config.mode != null) {
@@ -440,6 +458,7 @@ function updateStrip(id, stripdata) {
   }
   $(e).find('#ip').text(stripdata.ip);
   $(e).find('#version').text(stripdata.version);
+  console.log($(e).find('#rssi'));
   $(e).find('#rssi').text(stripdata.rssi + ' dBm');
   var m = new moment(strip.lastCheckin);
   dateString = m.format('MMM DD, h:mm:ss a') + ' (' + m.fromNow() + ')';
@@ -470,33 +489,45 @@ function createStrip(id) {
   allStrips[id] = strip;
 
   var container = $('#striplist');
-  strip.stripElem = $('<div/>')
-    .addClass('card')
-    .addClass('list-group-item')
-    .attr('id', 'stripline-strip-'+id)
+  var cardline = $('<div/>')
+    .addClass('strip-line')
     .appendTo(container);
-  var cardbody = $('<div/>')
-    .addClass('card-body')
-    .appendTo(strip.stripElem);
+  strip.stripElem = cardline;
+
+  var card = $('<div/>')
+    .addClass('strip-card')
+    .addClass('mdl-card')
+    .addClass('mdl-shadow--2dp')
+    .attr('id', 'stripline-strip-'+id)
+    .appendTo(cardline);
   var cardtitle = $('<div/>')
-    .addClass('card-title')
-    .appendTo(cardbody);
+    .attr('id', 'strip-title')
+    .addClass('mdl-card__title')
+    .appendTo(card);
+  var cardbody = $('<div/>')
+    .addClass('mdl-card__supporting-text')
+    .appendTo(card);
 
   var s = $('<span/>')
-    .addClass('h5')
+    .addClass('strip-id')
     .text(id)
     .appendTo(cardtitle);
 
-  var f = $('<form/>').appendTo(cardtitle);
-  var s = $('<div/>')
-    .addClass('switch')
-    .appendTo(f);
   var lbl = $('<label/>')
-     .text('Enabled')
-     .appendTo(s);
+     .addClass('mdl-switch')
+     .addClass('mdl-js-switch')
+     .addClass('mdl-js-ripple-effect')
+     .attr('for', 'strip-enable')
+     .appendTo(cardtitle);
   var inp = $('<input/>')
     .attr('type', 'checkbox')
+    .attr('id', 'strip-enable')
+    .addClass('mdl-switch__input')
     .prop('checked', true)
+    .appendTo(lbl);
+  var ls = $('<span/>')
+    .addClass("mdl-switch__label")
+    .text('Enable')
     .appendTo(lbl);
 
   // Status area.
@@ -505,8 +536,6 @@ function createStrip(id) {
     .appendTo(cardbody);
 
   var tbl = $('<table/>')
-    .addClass('table')
-    .addClass('table-sm')
     .appendTo(statusArea);
 
   var tbody = $('<tbody/>')
@@ -587,31 +616,28 @@ function createStrip(id) {
   // Button group.
   var bg = $('<div/>')
     .addClass('container')
-    .addClass('btn-group')
     .attr('role', 'group')
     .appendTo(cardbody);
 
   var edit = $('<button/>')
     .attr('type', 'button')
-    .attr('data-toggle', 'modal')
-    .attr('data-target', '#editor')
-    .attr('aria-expanded', 'false')
-    .attr('aria-controls', 'editor')
-    .addClass('btn')
-    .addClass('btn-primary')
-    .addClass('btn-raised')
+    .addClass('mdl-button')
+    .addClass('mdl-js-button')
+    .addClass('mdl-button--raised')
+    .addClass('mdl-js-ripple-effect')
     .text('edit')
     .click(function() {
       editStripStart(id);
+      $("#editor").get()[0].showModal();
     })
     .appendTo(bg);
 
   $('<button/>')
     .attr('type', 'button')
-    .addClass('btn')
-    .addClass('btn-secondary')
-    .addClass('material-icons')
-    .text('refresh')
+    .addClass('mdl-button')
+    .addClass('mdl-js-button')
+    .addClass('mdl-button--icon')
+    .append($('<i/>').addClass('material-icons').text('refresh'))
     .appendTo(bg);
 
   $('<button/>')
@@ -620,15 +646,17 @@ function createStrip(id) {
     .attr('data-target', '#deleteStrip')
     .attr('aria-expanded', 'false')
     .attr('aria-controls', 'deleteStrip')
-    .addClass('btn')
-    .addClass('btn-secondary')
-    .addClass('material-icons')
-    .text('delete')
+    .addClass('mdl-button')
+    .addClass('mdl-js-button')
+    .addClass('mdl-button--icon')
+    .append($('<i/>').addClass('material-icons').text('delete'))
     .click(function() {
       deleteStripStart(id);
     })
     .appendTo(bg);
   
+  // Needed for MD Lite to kick in.
+  componentHandler.upgradeElements(card.get());
   return strip;
 }
 
