@@ -1,10 +1,19 @@
 /* https://coolors.co/d7dedc-cfcfcd-9a879d-7a3b69-563440 */
 /* https://coolors.co/eeeeff-7f7caf-9fb4c7-28587b-9fb798 */
 
-body {
-/*  background-color: #202020;
-  font-size: 20px;
-  */
+.btn.btn-primary {
+  background-color: #28587B !important;
+}
+.btn.btn-success {
+  background-color: #7F7CAF !important;
+}
+
+.switch label .bmd-switch-track {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.26) 0%, rgba(0, 0, 0, 0.26) 50%, #b7bacb 50%, #b7bacb 100%);
+}
+.switch label input:checked + .bmd-switch-track::after {
+  left: calc(100% - 1.25rem);
+  background-color: #28587b !important;
 }
 
 #header {
@@ -214,5 +223,3 @@ body {
 #green .ui-slider-handle { border-color: #8ae234; }
 #blue .ui-slider-range { background: #729fcf; }
 #blue .ui-slider-handle { border-color: #729fcf; }
-
-
