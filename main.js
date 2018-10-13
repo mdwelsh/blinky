@@ -170,11 +170,20 @@ function initEditor() {
   $('#editorCancel').click(function (e) {
     $("#editor").get()[0].close();
   });
+  $('#editorClose').click(function (e) {
+    $("#editor").get()[0].close();
+  });
 
   // Handle deletion completion.
   $('#deleteStripConfirm').click(function (e) {
-    $("#deleteStrip").modal('hide');
+    $("#deleteStrip").get()[0].close();
     deleteStripDone();
+  });
+  $('#deleteStripCancel').click(function (e) {
+    $("#deleteStrip").get()[0].close();
+  });
+  $('#deleteStripClose').click(function (e) {
+    $("#deleteStrip").get()[0].close();
   });
 }
 
@@ -655,16 +664,13 @@ function createStrip(id) {
 
   $('<button/>')
     .attr('type', 'button')
-    .attr('data-toggle', 'modal')
-    .attr('data-target', '#deleteStrip')
-    .attr('aria-expanded', 'false')
-    .attr('aria-controls', 'deleteStrip')
     .addClass('mdl-button')
     .addClass('mdl-js-button')
     .addClass('mdl-button--icon')
     .append($('<i/>').addClass('material-icons').text('delete'))
     .click(function() {
       deleteStripStart(id);
+      $("#deleteStrip").get()[0].showModal();
     })
     .appendTo(bg);
   

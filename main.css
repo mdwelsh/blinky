@@ -198,6 +198,16 @@ body {
   width: 80%;
 }
 
+.editorHeader {
+  display: grid;
+  grid-template-columns: 90% 10%;
+  width: 100%;
+}
+
+#editorTitle {
+  font-size: 16px;
+}
+
 #red, #green, #blue, #editorSpeedSlider, #editorBrightnessSlider, #editorColorChangeSlider, #editorNumPixelsSlider {
   width: 80%;
   margin: 15px;
@@ -215,3 +225,17 @@ body {
 #green .ui-slider-handle { border-color: #8ae234; }
 #blue .ui-slider-range { background: #729fcf; }
 #blue .ui-slider-handle { border-color: #729fcf; }
+
+#deleteStrip {
+  width: 80%;
+}
+
+.deleteStripHeader {
+  display: grid;
+  grid-template-columns: 90% 10%;
+  width: 100%;
+}
+
+#deleteStripTitle {
+  font-size: 16px;
+}

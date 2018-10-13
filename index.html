@@ -122,13 +122,15 @@
 
 <!-- Strip editor dialog modal -->
 <dialog id="editor" class="mdl-dialog">
-<div>
-  <h5 class="mdl-dialog__title" id="editorTitle">
+<div class="editorHeader">
+  <div class="mdl-dialog__title" id="editorTitle">
     Edit strip <span id="editorStripId"></span>
-  </h5>
-  <button id="editorClose" type="button" class="mdl-button mdl-js-button mdl-button--icon">
-    <i class="material-icons">close</i>
-  </button>
+  </div>
+  <div>
+    <button id="editorClose" type="button" class="mdl-button mdl-js-button mdl-button--icon">
+      <i class="material-icons">close</i>
+    </button>
+  </div>
 </div>
 <!-- Editor body -->
 <div class="mdl-dialog__content" id="editorBody">
@@ -190,27 +192,28 @@
 </dialog>
 
 <!-- Delete strip dialog modal -->
-<div class="modal fade" id="deleteStrip" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteStripTitle">
-          Delete strip <span id="deleteStripId"></span>
-        </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true" class="material-icons">close</span>
-        </button>
-      </div>
-      <!-- Delete strip body -->
-      <div class="modal-body" id="deleteStripBody">
-        Are you sure you want to delete this strip?
-      <div class="modal-footer">
-        <button type="button" class="mdl-button mdl-js-button" data-dismiss="modal">Cancel</button>
-        <button id="deleteStripConfirm" type="button" class="mdl-button mdl-js-button">Delete</button>
-      </div>
-    </div>
+<dialog id="deleteStrip" class="mdl-dialog">
+<div class="deleteStripHeader">
+  <div class="mdl-dialog__title" id="deleteStripTitle">
+    Delete strip <span id="deleteStripId"></span>
+  </div>
+  <div>
+    <button id="deleteStripClose" type="button" class="mdl-button mdl-js-button mdl-button--icon">
+      <i class="material-icons">close</i>
+    </button>
   </div>
 </div>
+<!-- Delete strip body -->
+<div class="mdl-dialog__content" id="deleteStripBody">
+  Are you sure you want to delete this strip?
+</div>
+<div class="mdl-dialog__actions">
+  <div role="group">
+    <button id="deleteStripCancel" type="button" class="mdl-button">Cancel</button>
+    <button id="deleteStripConfirm" type="button" class="mdl-button">Delete</button>
+  </div>
+</div>
+</dialog>
 
 <script src="main.js"></script>
 </body>
