@@ -23,6 +23,11 @@ body {
   height: 50px;
 }
 
+#contents {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
 .title {
   font-family: 'Press Start 2P', cursive;
   font-weight: bold;
@@ -163,6 +168,7 @@ body {
   padding-top: 10px;
 }
 
+
 .strip-line {
   margin-top: 10px;
   justify-content: space-between;
@@ -170,6 +176,21 @@ body {
 
 .strip-card {
   width: 90%;
+}
+
+.strip-title-line {
+  display: grid;
+  grid-template-columns: 20% 65% 15%;
+  width: 100%;
+}
+
+.strip-id {
+}
+
+.strip-title-space {
+}
+
+.strip-title-switch {
 }
 
 /* Editor UI */

@@ -65,6 +65,7 @@ initEditor();
 setup();
 
 // MDW TESTING STORAGE STUFF
+/*
 var storage = firebase.storage();
 var storageRef = storage.ref();
 var fwRef = storageRef.child('Blinky.ino.bin');
@@ -91,8 +92,8 @@ var fwUrl = fwRef.getDownloadURL().then(function(fwUrl) {
   console.log('Done with fw fetch');
 
   var reader = new FileReader();
-
 });
+*/
 
 function initEditor() {
   var editor = $("#editorMode");
@@ -508,17 +509,29 @@ function createStrip(id) {
     .addClass('mdl-card__supporting-text')
     .appendTo(card);
 
-  var s = $('<span/>')
+  var tl = $('<div/>')
+    .addClass('strip-title-line')
+    .appendTo(cardtitle);
+
+  var sid = $('<div/>')
     .addClass('strip-id')
     .text(id)
-    .appendTo(cardtitle);
+    .appendTo(tl);
+
+  var spc = $('<div/>')
+    .addClass('strip-title-space')
+    .appendTo(tl);
+
+  var sw = $('<div/>')
+    .addClass('strip-title-switch')
+    .appendTo(tl);
 
   var lbl = $('<label/>')
      .addClass('mdl-switch')
      .addClass('mdl-js-switch')
      .addClass('mdl-js-ripple-effect')
      .attr('for', 'strip-enable')
-     .appendTo(cardtitle);
+     .appendTo(sw);
   var inp = $('<input/>')
     .attr('type', 'checkbox')
     .attr('id', 'strip-enable')
