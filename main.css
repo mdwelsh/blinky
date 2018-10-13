@@ -166,7 +166,6 @@ body {
 
 .log-line-text {
   padding-left: 10px;
-/*  float: right; */
 }
 
 #striplist {
@@ -196,6 +195,12 @@ body {
 }
 
 .strip-title-switch {
+}
+
+.strip-status {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  grid-row-gap: 5px;
 }
 
 .strip-card-buttons {

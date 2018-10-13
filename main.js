@@ -550,85 +550,64 @@ function createStrip(id) {
   // Status area.
   var statusArea = $('<div/>')
     .addClass('container')
+    .addClass('strip-status')
     .appendTo(cardbody);
 
-  var tbl = $('<table/>')
-    .appendTo(statusArea);
-
-  var tbody = $('<tbody/>')
-    .appendTo(tbl);
-
-  r0 = $('<tr/>')
-    .appendTo(tbody);
-  $('<td/>')
+  $('<div/>')
     .text('Name')
-    .appendTo(r0);
-  $('<td/>')
+    .appendTo(statusArea);
+  $('<div/>')
     .attr('id', 'name')
     .text('unknown')
-    .appendTo(r0);
+    .appendTo(statusArea);
 
-  r0 = $('<tr/>')
-    .appendTo(tbody);
-  $('<td/>')
+  $('<div/>')
     .text('Last checkin')
-    .appendTo(r0);
-  $('<td/>')
+    .appendTo(statusArea);
+  $('<div/>')
     .attr('id', 'checkin')
     .text('unknown')
-    .appendTo(r0);
+    .appendTo(statusArea);
 
-  r0 = $('<tr/>')
-    .appendTo(tbody);
-  $('<td/>')
+  $('<div/>')
     .text('Firmware version')
-    .appendTo(r0);
-  $('<td/>')
+    .appendTo(statusArea);
+  $('<div/>')
     .attr('id', 'version')
     .text('unknown')
-    .appendTo(r0);
+    .appendTo(statusArea);
 
-  r0 = $('<tr/>')
-    .appendTo(tbody);
-  $('<td/>')
+  $('<div/>')
     .text('IP address')
-    .appendTo(r0);
-  $('<td/>')
+    .appendTo(statusArea);
+  $('<div/>')
     .attr('id', 'ip')
     .text('unknown')
-    .appendTo(r0);
+    .appendTo(statusArea);
   
-  r0 = $('<tr/>')
-    .appendTo(tbody);
-  $('<td/>')
+  $('<div/>')
     .text('RSSI')
-    .appendTo(r0);
-  $('<td/>')
+    .appendTo(statusArea);
+  $('<div/>')
     .attr('id', 'rssi')
     .text('unknown')
-    .appendTo(r0);
+    .appendTo(statusArea);
 
-  var r0 = $('<tr/>')
-    .appendTo(tbody);
-  $('<td/>')
+  $('<div/>')
     .text('Current config')
-    .appendTo(r0);
-  $('<td/>')
+    .appendTo(statusArea);
+  $('<div/>')
     .attr('id', 'curMode')
     .text('unknown')
-    .appendTo(r0);
+    .appendTo(statusArea);
 
-  r0 = $('<tr/>')
-    .appendTo(tbody);
-  $('<td/>')
+  $('<div/>')
     .text('Next config')
-    .appendTo(r0);
-  var nme = $('<td/>')
-    .appendTo(r0);
-  $('<span/>')
+    .appendTo(statusArea);
+  $('<div/>')
     .attr('id', 'nextMode')
     .text('unknown')
-    .appendTo(nme);
+    .appendTo(statusArea);
 
   // Button group.
   var bg = $('<div/>')
