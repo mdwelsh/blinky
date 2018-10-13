@@ -198,6 +198,25 @@ body {
 .strip-title-switch {
 }
 
+.strip-card-buttons {
+  margin: 20px;
+  display: grid;
+  grid-template-columns: [edit] 10% 1fr [refresh] 30px [delete] 30px;
+  width: 90%;
+}
+
+.strip-card-buttons > button {
+  justify-self: center;
+}
+
+#refreshButton {
+  grid-column-start: refresh;
+}
+j
+#deleteButton {
+  grid-column-start: delete
+}
+
 /* Editor UI */
 #editor {
   width: 80%;

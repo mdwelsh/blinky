@@ -632,9 +632,8 @@ function createStrip(id) {
 
   // Button group.
   var bg = $('<div/>')
-    .addClass('container')
-    .attr('role', 'group')
-    .appendTo(cardbody);
+    .addClass('strip-card-buttons')
+    .appendTo(card);
 
   var edit = $('<button/>')
     .attr('type', 'button')
@@ -651,6 +650,7 @@ function createStrip(id) {
 
   $('<button/>')
     .attr('type', 'button')
+    .attr('id', 'refreshButton')
     .addClass('mdl-button')
     .addClass('mdl-js-button')
     .addClass('mdl-button--icon')
@@ -659,6 +659,7 @@ function createStrip(id) {
 
   $('<button/>')
     .attr('type', 'button')
+    .attr('id', 'deleteButton')
     .addClass('mdl-button')
     .addClass('mdl-js-button')
     .addClass('mdl-button--icon')
