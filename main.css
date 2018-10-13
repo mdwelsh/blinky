@@ -268,3 +268,16 @@ j
 #deleteStripTitle {
   font-size: 16px;
 }
+
+/* Firmware UI */
+
+#firmwareUploadButton {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  padding-top: 24px;
+  margin-bottom: 0;
+  z-index: 998;
+}
+
+

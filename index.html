@@ -108,7 +108,10 @@
 
     <section class="mdl-layout__tab-panel" id="scroll-tab-firmware">
       <div class="tab-contents">
-        This is firmware section.
+        <div id="firmwarelist" class="listgroup"></div>
+        <button id="firmwareUploadButton" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+          <i class="material-icons">add</i>
+        </button>
       </div>
     </section>
 
@@ -155,28 +158,28 @@
 </div>
 <!-- Editor body -->
 <div class="mdl-dialog__content" id="editorBody">
-  <div id="editorName">
+  <div id="editorName" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
     <div>
-      <label for="editorNameField">Device name</label>
+      <label for="editorNameField" class="mdl-textfield__label">Device name</label>
     </div>
     <div>
-      <input type="text" class="form-control" id="editorNameField"></input>
-    </div>
-  </div>
-  <div id="editorFirmware">
-    <div>
-      <label for="editorFirmwareSelect">Firmware</label>
-    </div>
-    <div>
-      <select class="form-control" id="editorFirmwareSelect"></select>
+      <input type="text" class="mdl-textfield__input" id="editorNameField"></input>
     </div>
   </div>
-  <div id="editorMode">
+  <div id="editorFirmware" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
     <div>
-      <label for="editorModeSelect">Set mode</label>
+      <label for="editorFirmwareSelect" class="mdl-textfield__label">Firmware</label>
     </div>
     <div>
-      <select class="form-control" id="editorModeSelect"></select>
+      <select class="mdl-textfield__input" id="editorFirmwareSelect"></select>
+    </div>
+  </div>
+  <div id="editorMode" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <div>
+      <label for="editorModeSelect" class="mdl-textfield__label">Set mode</label>
+    </div>
+    <div>
+      <select class="mdl-textfield__input" id="editorModeSelect"></select>
     </div>
   </div>
   <div id="editorSpeed">
