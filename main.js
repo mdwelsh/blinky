@@ -411,14 +411,9 @@ function showFullUI() {
   $('#login').hide();
   $('#logout').show();
 
-  $('#about').hide();
-  $('#postlogin').hide('blind');
-
   $("#log").empty();
   $("#striplist").empty();
-
-  // Show it.
-  $('#postlogin').show('fade', 1000);
+  $("#firmware").empty();
 }
 
 // Callback invoked when database returns new value for a strip.

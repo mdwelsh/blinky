@@ -73,7 +73,6 @@
     <span class="title"><img height="50px" src="blinky.png"></img> Blinky</span>
     <span id="userinfo">
       <div role="group">
-        <a class="mdl-button mdl-js-button" href="http://teamsidney.com/blinky">About</a>
         <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="login">Login</button>
         <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="logout">Logout</button>
       </div>
@@ -81,43 +80,65 @@
   </div>
 </div>
 
-<div id="contents">
-  <div id="about">
-    <p>
-    <span class="titlesmall">
-      Welcome to Blinky!
-    </span>
-    <p>
-    Blinky is a web controller for a cloud-controlled LED light display,
-    developed by <a href="http://teamsidney.com/">Team Sidney Enterprises</a>.
-    Press the <span style="text-transform: uppercase;">login</span> button above
-    to access the control panel. Note that only authorized users can access this page.
-    <ul>
-      <li><a href="http://teamsidney.com/blinky">Learn more</a>
-      <li>Source code for the
-        <a href="https://github.com/mdwelsh/blinky">web controller</a> and
-        <a href="https://github.com/mdwelsh/sidney-projects/tree/master/arduino/Blinky">device firmware</a>
-        on GitHub
-    </ul>
-  </div>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 
-  <div id="postlogin">
-    <div id="global">
-      <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="enableAll">
-        <input type="checkbox" id="enableAll" class="mdl-switch__input" checked>
-        <span class="mdl-switch__label">Enable all</span>
-      </label>
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+      <a href="#scroll-tab-devices" class="mdl-layout__tab">Devices</a>
+      <a href="#scroll-tab-firmware" class="mdl-layout__tab">Firmware</a>
+      <a href="#scroll-tab-log" class="mdl-layout__tab">Log</a>
+      <a href="#scroll-tab-about" class="mdl-layout__tab">About</a>
     </div>
+  </header>
 
-    <div id="dberror" class="errormsg"></div>
-    <div id="striplist" class="listgroup"></div>
-    <div id="logcollapse">
-      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="button" id="showLogButton">
-        Show log
-      </button>
-      <div id="log" style="display:none;"></div>
-    </div>
-  </div>
+  <main class="mdl-layout__content">
+
+    <section class="mdl-layout__tab-panel is-active" id="scroll-tab-devices">
+      <div class="tab-contents">
+        <div id="global">
+          <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="enableAll">
+            <input type="checkbox" id="enableAll" class="mdl-switch__input" checked>
+            <span class="mdl-switch__label">Enable all</span>
+          </label>
+        </div>
+        <div id="dberror" class="errormsg"></div>
+        <div id="striplist" class="listgroup"></div>
+      </div>
+    </section>
+
+    <section class="mdl-layout__tab-panel" id="scroll-tab-firmware">
+      <div class="tab-contents">
+        This is firmware section.
+      </div>
+    </section>
+
+    <section class="mdl-layout__tab-panel" id="scroll-tab-log">
+      <div class="tab-contents">
+        <div id="log"></div>
+      </div>
+    </section>
+
+    <section class="mdl-layout__tab-panel" id="scroll-tab-about">
+      <div class="tab-contents">
+        <p>
+          <span class="titlesmall">
+            Welcome to Blinky!
+         </span>
+        <p>
+        Blinky is a web controller for a cloud-controlled LED light display,
+        developed by <a href="http://teamsidney.com/">Team Sidney Enterprises</a>.
+        Press the <span style="text-transform: uppercase;">login</span> button above
+        to access the control panel. Note that only authorized users can access this page.
+        <ul>
+          <li><a href="http://teamsidney.com/blinky">Learn more</a>
+          <li>Source code for the
+            <a href="https://github.com/mdwelsh/blinky">web controller</a> and
+            <a href="https://github.com/mdwelsh/sidney-projects/tree/master/arduino/Blinky">device firmware</a> on GitHub
+        </ul>
+      </div>
+    </section>
+
+  </main>
 </div>
 
 <!-- Strip editor dialog modal -->
