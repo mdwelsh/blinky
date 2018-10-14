@@ -1,24 +1,24 @@
 /* https://coolors.co/d7dedc-cfcfcd-9a879d-7a3b69-563440 */
 /* https://coolors.co/eeeeff-7f7caf-9fb4c7-28587b-9fb798 */
 
-.btn.btn-primary {
-  background-color: #28587B !important;
-}
-.btn.btn-success {
-  background-color: #7F7CAF !important;
-}
-
-.switch label .bmd-switch-track {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.26) 0%, rgba(0, 0, 0, 0.26) 50%, #b7bacb 50%, #b7bacb 100%);
-}
-.switch label input:checked + .bmd-switch-track::after {
-  left: calc(100% - 1.25rem);
-  background-color: #28587b !important;
+body {
+  background-color: #f4f4f4;
+  font-family: Roboto;
+  font-size: 12px;
 }
 
 #header {
-  border-bottom: 1px solid #a08080;
-  margin-bottom: 20px;
+  background-color: rgb(123,141,241);
+  /*border-bottom: 1px solid #a08080; */
+  /*margin-bottom: 20px;*/
+}
+
+#logout {
+  /*background-color: rgba(255, 255, 255, 0.8);*/
+}
+
+#tabHeader {
+  background-color: #a0a0a0;
 }
 
 #headercontents {
@@ -30,6 +30,12 @@
   margin-top: 20px;
   padding-top: 20px;
   height: 50px;
+}
+
+.tab-contents {
+  margin-top: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .title {
@@ -165,48 +171,78 @@
 
 .log-line-text {
   padding-left: 10px;
-/*  float: right; */
 }
 
 #striplist {
   padding-top: 10px;
 }
 
+
 .strip-line {
   margin-top: 10px;
   justify-content: space-between;
 }
 
+.strip-card {
+  width: 100%;
+}
+
+.strip-title-line {
+  display: grid;
+  grid-template-columns: 100px 1fr 100px;
+  width: 100%;
+}
+
 .strip-id {
-/*  font-family: Varela Round;
-  color: #ffffff;
-  font-size: 20px;
-  padding: 10px;
-  */
+}
+
+.strip-title-space {
+}
+
+.strip-title-switch {
 }
 
 .strip-status {
-/*  font-family: Roboto;
-  color: #808080;
-  font-size: 12px;
-  */
+  display: grid;
+  grid-template-columns: 30% 70%;
+  grid-row-gap: 5px;
 }
 
-.strip-select {
-  float: right;
-/*
-  font-family: Varela Round;
-  color: #ffffff;
-  font-size: 20px;
-  background: #606060;
-  */
-  text-decoration: none;
-  width: 100px;
-  height: 100%;
+.strip-card-buttons {
+  margin: 20px;
+  display: grid;
+  grid-template-columns: [edit] 80px 1fr [refresh] 50px [delete] 50px;
+  width: 90%;
+}
+
+.strip-card-buttons > button {
+  justify-self: center;
+}
+
+#refreshButton {
+  grid-column-start: refresh;
+}
+j
+#deleteButton {
+  grid-column-start: delete
 }
 
 /* Editor UI */
-#red, #green, #blue, #editorSpeedSlider, #editorBrightnessSlider, #editorColorChangeSlider {
+#editor {
+  width: 80%;
+}
+
+.editorHeader {
+  display: grid;
+  grid-template-columns: 90% 10%;
+  width: 100%;
+}
+
+#editorTitle {
+  font-size: 16px;
+}
+
+#red, #green, #blue, #editorSpeedSlider, #editorBrightnessSlider, #editorColorChangeSlider, #editorNumPixelsSlider {
   width: 80%;
   margin: 15px;
 }
@@ -223,3 +259,30 @@
 #green .ui-slider-handle { border-color: #8ae234; }
 #blue .ui-slider-range { background: #729fcf; }
 #blue .ui-slider-handle { border-color: #729fcf; }
+
+#deleteStrip {
+  width: 80%;
+}
+
+.deleteStripHeader {
+  display: grid;
+  grid-template-columns: 90% 10%;
+  width: 100%;
+}
+
+#deleteStripTitle {
+  font-size: 16px;
+}
+
+/* Firmware UI */
+
+#firmwareUploadButton {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  padding-top: 24px;
+  margin-bottom: 0;
+  z-index: 998;
+}
+
+

@@ -21,11 +21,10 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<!-- Bootstrap material design -->
-<link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
-
-<!-- Material Design for Bootstrap fonts and icons -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+<!-- Material Design Lite -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
@@ -41,9 +40,6 @@
 
 <!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
-<script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
 
 <!-- jQuery UI -->
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
@@ -72,157 +68,176 @@
 </head>
 <body>
 
-<div class="container" id="header">
-  <div class="row justify-content-between" id="headercontents">
-    <div class="col title">
-      <span><img height="50px" src="blinky.png"></img> Blinky</span>
-    </div>
-    <div class="col" id="userinfo">
-       <div class="btn-group" role="group">
-       <a class="btn btn-link" href="http://teamsidney.com/blinky">About</a>
-       <button type="button" class="btn btn-primary btn-raised" id="login">Login</button>
-       <button type="button" class="btn btn-primary btn-raised" id="logout">Logout</button>
-     </div>
-    </div>
+<div id="header">
+  <div id="headercontents">
+    <span class="title"><img height="50px" src="blinky.png"></img> Blinky</span>
+    <span id="userinfo">
+      <div role="group">
+        <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="login">Login</button>
+        <button type="button" class="mdl-button mdl-js-button mdl-button--colored mdl-button--raised mdl-js-ripple-effect" id="logout">Logout</button>
+      </div>
+    </span>
   </div>
 </div>
 
-<div class="container" id="contents">
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 
-  <div id="about">
-    <p>
-    <span class="titlesmall">
-      Welcome to Blinky!
-    </span>
-    <p>
-    Blinky is a web controller for a cloud-controlled LED light display,
-    developed by <a href="http://teamsidney.com/">Team Sidney Enterprises</a>.
-    Press the <span style="text-transform: uppercase;">login</span> button above
-    to access the control panel. Note that only authorized users can access this page.
-    <ul>
-      <li><a href="http://teamsidney.com/blinky">Learn more</a>
-      <li>Source code for the
-        <a href="https://github.com/mdwelsh/blinky">web controller</a> and
-        <a href="https://github.com/mdwelsh/sidney-projects/tree/master/arduino/Blinky">device firmware</a>
-        on GitHub
-    </ul>
-  </div>
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+      <a href="#scroll-tab-devices" class="mdl-layout__tab">Devices</a>
+      <a href="#scroll-tab-firmware" class="mdl-layout__tab">Firmware</a>
+      <a href="#scroll-tab-log" class="mdl-layout__tab">Log</a>
+      <a href="#scroll-tab-about" class="mdl-layout__tab">About</a>
+    </div>
+  </header>
 
-  <div id="postlogin">
-    <div id="global" class="container">
-      <div class="switch">
-        <label>
-          <input id="enableAll" type="checkbox" checked>Enable all</input>
-        </label>
+  <main class="mdl-layout__content">
+
+    <section class="mdl-layout__tab-panel is-active" id="scroll-tab-devices">
+      <div class="tab-contents">
+        <div id="global">
+          <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="enableAll">
+            <input type="checkbox" id="enableAll" class="mdl-switch__input" checked>
+            <span class="mdl-switch__label">Enable all</span>
+          </label>
+        </div>
+        <div id="dberror" class="errormsg"></div>
+        <div id="striplist" class="listgroup"></div>
       </div>
-    </div>
+    </section>
 
-    <div id="dberror" class="errormsg"></div>
-    <div id="striplist" class="listgroup"></div>
-    <div id="logcollapse" class="container">
-      <button class="btn btn-primary btn-raised" type="button"
-        data-toggle="collapse" data-target="#log" aria-expanded="false" aria-controls="log">
-        Show log
-      </button>
-      <div id="log" class="listgroup collapse"></div>
-    </div>
-    <div id="controls" class="controls">
-      <button type="button" class="btn btn-primary bmd-btn-fab" id="addStrip">
-        <i class="material-icons">add</i>
-      </button>
-    </div>
-  </div>
+    <section class="mdl-layout__tab-panel" id="scroll-tab-firmware">
+      <div class="tab-contents">
+        <div id="firmwarelist" class="listgroup"></div>
+        <button id="firmwareUploadButton" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+          <i class="material-icons">add</i>
+        </button>
+      </div>
+    </section>
+
+    <section class="mdl-layout__tab-panel" id="scroll-tab-log">
+      <div class="tab-contents">
+        <div id="log"></div>
+      </div>
+    </section>
+
+    <section class="mdl-layout__tab-panel" id="scroll-tab-about">
+      <div class="tab-contents">
+        <p>
+          <span class="titlesmall">
+            Welcome to Blinky!
+         </span>
+        <p>
+        Blinky is a web controller for a cloud-controlled LED light display,
+        developed by <a href="http://teamsidney.com/">Team Sidney Enterprises</a>.
+        Press the <span style="text-transform: uppercase;">login</span> button above
+        to access the control panel. Note that only authorized users can access this page.
+        <ul>
+          <li><a href="http://teamsidney.com/blinky">Learn more</a>
+          <li>Source code for the
+            <a href="https://github.com/mdwelsh/blinky">web controller</a> and
+            <a href="https://github.com/mdwelsh/sidney-projects/tree/master/arduino/Blinky">device firmware</a> on GitHub
+        </ul>
+      </div>
+    </section>
+
+  </main>
 </div>
 
 <!-- Strip editor dialog modal -->
-<div class="modal fade" id="editor" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editorTitle">
-          Edit strip <span id="editorStripId"></span>
-        </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true" class="material-icons">close</span>
-        </button>
-      </div>
-      <!-- Editor body -->
-      <div class="modal-body" id="editorBody">
-        <div id="editorName">
-          <div class="form-group">
-            <label for="editorNameField">Device name</label>
-            <input type="text" class="form-control" id="editorNameField"></input>
-          </div>
-        </div>
-        <div id="editorFirmware">
-          <div class="form-group">
-            <label for="editorFirmwareSelect">Firmware</label>
-            <select class="form-control" id="editorFirmwareSelect"></select>
-          </div>
-        </div>
-        <div id="editorMode">
-          <div class="form-group">
-            <label for="editorModeSelect">Set mode</label>
-            <select class="form-control" id="editorModeSelect"></select>
-          </div>
-        </div>
-        <div id="editorSpeed">
-          <div>Speed <span id="speedIndicator">??</span></div>
-          <div id="editorSpeedSlider"></div>
-        </div>
-        <div id="editorBrightness">
-          <div>Brightness <span id="brightnessIndicator">??</span></div>
-          <div id="editorBrightnessSlider"></div>
-        </div>
-        <div id="editorColorChange">
-          <div>Color change <span id="colorChangeIndicator">??</span></div>
-          <div id="editorColorChangeSlider"></div>
-        </div>
-        <div id="editorNumPixels">
-          <div>Num pixels <span id="numPixelsIndicator">??</span></div>
-          <div id="editorNumPixelsSlider"></div>
-        </div>
-        <div id="editorColor">
-          <div>Color</div>
-          <div id="red"></div>
-          <div id="green"></div>
-          <div id="blue"></div>
-          <div id="swatch" class="ui-widget-content ui-corner-all"></div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <div class="btn-group" role="group">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button id="editorSave" type="button" class="btn btn-raised btn-primary">Apply</button>
-          <button id="editorSaveAll" type="button" class="btn btn-raised btn-success">Apply to all</button>
-        </div>
-      </div>
-    </div>
+<dialog id="editor" class="mdl-dialog">
+<div class="editorHeader">
+  <div class="mdl-dialog__title" id="editorTitle">
+    Edit strip <span id="editorStripId"></span>
+  </div>
+  <div>
+    <button id="editorClose" type="button" class="mdl-button mdl-js-button mdl-button--icon">
+      <i class="material-icons">close</i>
+    </button>
   </div>
 </div>
+<!-- Editor body -->
+<div class="mdl-dialog__content" id="editorBody">
+  <div id="editorName" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <div>
+      <label for="editorNameField" class="mdl-textfield__label">Device name</label>
+    </div>
+    <div>
+      <input type="text" class="mdl-textfield__input" id="editorNameField"></input>
+    </div>
+  </div>
+  <div id="editorFirmware" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <div>
+      <label for="editorFirmwareSelect" class="mdl-textfield__label">Firmware</label>
+    </div>
+    <div>
+      <select class="mdl-textfield__input" id="editorFirmwareSelect"></select>
+    </div>
+  </div>
+  <div id="editorMode" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <div>
+      <label for="editorModeSelect" class="mdl-textfield__label">Set mode</label>
+    </div>
+    <div>
+      <select class="mdl-textfield__input" id="editorModeSelect"></select>
+    </div>
+  </div>
+  <div id="editorSpeed">
+    <div>Speed <span id="speedIndicator">??</span></div>
+    <div id="editorSpeedSlider"></div>
+  </div>
+  <div id="editorBrightness">
+    <div>Brightness <span id="brightnessIndicator">??</span></div>
+    <div id="editorBrightnessSlider"></div>
+  </div>
+  <div id="editorColorChange">
+    <div>Color change <span id="colorChangeIndicator">??</span></div>
+    <div id="editorColorChangeSlider"></div>
+  </div>
+  <div id="editorNumPixels">
+    <div>Num pixels <span id="numPixelsIndicator">??</span></div>
+    <div id="editorNumPixelsSlider"></div>
+  </div>
+  <div id="editorColor">
+    <div>Color</div>
+    <div id="red"></div>
+    <div id="green"></div>
+    <div id="blue"></div>
+    <div id="swatch" class="ui-widget-content ui-corner-all"></div>
+  </div>
+</div>
+<div class="mdl-dialog__actions">
+  <div role="group">
+    <button id="editorCancel" type="button" class="mdl-button">Cancel</button>
+    <button id="editorSave" type="button" class="mdl-button">Apply</button>
+    <button id="editorSaveAll" type="button" class="mdl-button">Apply to all</button>
+  </div>
+</div>
+</dialog>
 
 <!-- Delete strip dialog modal -->
-<div class="modal fade" id="deleteStrip" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteStripTitle">
-          Delete strip <span id="deleteStripId"></span>
-        </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true" class="material-icons">close</span>
-        </button>
-      </div>
-      <!-- Delete strip body -->
-      <div class="modal-body" id="deleteStripBody">
-        Are you sure you want to delete this strip?
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button id="deleteStripConfirm" type="button" class="btn btn-danger">Delete</button>
-      </div>
-    </div>
+<dialog id="deleteStrip" class="mdl-dialog">
+<div class="deleteStripHeader">
+  <div class="mdl-dialog__title" id="deleteStripTitle">
+    Delete strip <span id="deleteStripId"></span>
+  </div>
+  <div>
+    <button id="deleteStripClose" type="button" class="mdl-button mdl-js-button mdl-button--icon">
+      <i class="material-icons">close</i>
+    </button>
   </div>
 </div>
+<!-- Delete strip body -->
+<div class="mdl-dialog__content" id="deleteStripBody">
+  Are you sure you want to delete this strip?
+</div>
+<div class="mdl-dialog__actions">
+  <div role="group">
+    <button id="deleteStripCancel" type="button" class="mdl-button">Cancel</button>
+    <button id="deleteStripConfirm" type="button" class="mdl-button">Delete</button>
+  </div>
+</div>
+</dialog>
 
 <script src="main.js"></script>
 </body>
