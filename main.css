@@ -8,8 +8,13 @@ body {
 }
 
 #header {
-  border-bottom: 1px solid #a08080;
+  background-color: rgb(123,141,241);
+  /*border-bottom: 1px solid #a08080; */
   /*margin-bottom: 20px;*/
+}
+
+#logout {
+  /*background-color: rgba(255, 255, 255, 0.8);*/
 }
 
 #tabHeader {
@@ -179,12 +184,12 @@ body {
 }
 
 .strip-card {
-  width: 90%;
+  width: 100%;
 }
 
 .strip-title-line {
   display: grid;
-  grid-template-columns: 20% 65% 15%;
+  grid-template-columns: 100px 1fr 100px;
   width: 100%;
 }
 
@@ -206,7 +211,7 @@ body {
 .strip-card-buttons {
   margin: 20px;
   display: grid;
-  grid-template-columns: [edit] 10% 1fr [refresh] 30px [delete] 30px;
+  grid-template-columns: [edit] 80px 1fr [refresh] 50px [delete] 50px;
   width: 90%;
 }
 

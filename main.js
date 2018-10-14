@@ -338,8 +338,13 @@ function globalsChanged(snapshot) {
   console.log('Received new globals:');
   console.log(globals);
 
-  // Update UI.
-  $('#enableAll').prop('checked', globals.allEnabled);
+  // Update UI. This is a little wonky and undocumented MDLite behavior.
+  var enabledAll = cb[0].parentElement.MaterialSwitch;
+  if (globals.allEnabled) {
+    enabledAll.on();
+  } else {
+    enabledAll.off();
+  }
 
   // Note that any changes to the configs is done when the button is toggled.
 }
