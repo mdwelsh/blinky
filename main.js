@@ -308,14 +308,21 @@ function refreshSwatch() {
 // Set up initial UI elements.
 function setup() {
   if (currentUser() == null) {
+    console.log("Not logged in");
     // Not logged in yet.
     showLoginButton();
     logRef = null;
     globalsRef = null;
     firmwareVersionsRef = null;
 
+    $("#log").empty();
+    $("#striplist").empty();
+    $("#firmware").empty();
+    $("#about-tab-button")[0].click();
+
   } else {
     showFullUI();
+    $("#devices-tab-button")[0].click();
 
     checkinRef = firebase.database().ref('checkin/');
     checkinRef.on('child_added', stripCheckin, dbErrorCallback);
