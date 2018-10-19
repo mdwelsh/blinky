@@ -158,13 +158,13 @@ function initEditor() {
     console.log('Editor save clicked');
     $("#editor").get()[0].close();
     var id = $("#editorStripId").text();
-    editStripDone(id);
+    editStripDone(id, false);
   });
   $('#editorSaveAll').click(function (e) {
-    console.log('Editor save clicked');
+    console.log('Editor save all clicked');
     $("#editor").get()[0].close();
     $.each(allStrips, function(id, strip) {
-      editStripDone(id);
+      editStripDone(id, true);
     });
   });
   $('#editorCancel').click(function (e) {
@@ -239,21 +239,37 @@ function editStripStart(id) {
 }
 
 // Called when editing done.
-function editStripDone(id) {
+function editStripDone(id, editAll) {
   var strip = allStrips[id];
   if (strip == null) {
     console.log("Can't edit unknown strip: " + id);
     return;
   }
+  console.log('Editing strip:');
+  console.log(strip);
 
   // Extract values from modal.
-  var name = $("#editorNameField").val();
+  //
+  // For some fields, if we are doing a global edit, don't override
+  // with the editor's values.
+  var name;
+  var numPixels;
+  if (editAll) {
+    name = strip.nextConfig.name;
+    numPixels = strip.curConfig.numPixels;
+  } else {
+    name = $("#editorNameField").val();
+    numPixels = $("#editorNumPixelsSlider").slider("value");
+  }
+
+  console.log('NAME: ' + name);
+  console.log('NUMPIXELS: ' + numPixels);
+    
   var version = $("#editorFirmwareSelect").find(':selected').text();
   var mode = $("#editorModeSelect").find(':selected').text();
   var speed = $("#editorSpeedSlider").slider("value");
   var brightness = $("#editorBrightnessSlider").slider("value");
   var colorChange = $("#editorColorChangeSlider").slider("value");
-  var numPixels = $("#editorNumPixelsSlider").slider("value");
   var red = $("#red").slider("value");
   var green = $("#green").slider("value");
   var blue = $("#blue").slider("value");
