@@ -245,8 +245,6 @@ function editStripDone(id, editAll) {
     console.log("Can't edit unknown strip: " + id);
     return;
   }
-  console.log('Editing strip:');
-  console.log(strip);
 
   // Extract values from modal.
   //
@@ -261,9 +259,6 @@ function editStripDone(id, editAll) {
     name = $("#editorNameField").val();
     numPixels = $("#editorNumPixelsSlider").slider("value");
   }
-
-  console.log('NAME: ' + name);
-  console.log('NUMPIXELS: ' + numPixels);
     
   var version = $("#editorFirmwareSelect").find(':selected').text();
   var mode = $("#editorModeSelect").find(':selected').text();
