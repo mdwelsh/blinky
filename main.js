@@ -30,6 +30,8 @@ var allmodes = [
   'rainbowcycle',
   'spackle',
   'fire',
+  'candle',
+  'flicker',
   'strobe',
   'rain',
   'comet',
@@ -145,7 +147,7 @@ function initEditor() {
   $("#editorNumPixelsSlider").slider({
     orientation: "horizontal",
     range: "min",
-    min: 100,
+    min: 72,
     max: 200,
     value: 120,
     slide: refreshSwatch,
@@ -200,6 +202,9 @@ function editStripStart(id) {
   // Populate firmware version dropdown.
   var fwselect = $("#editorFirmwareSelect");
   fwselect.empty();
+  $('<option/>')
+    .text('current')
+    .appendTo(fwselect);
   for (var fw in firmwareVersions) {
     console.log('Adding fw to editor: ' + fw);
     $('<option/>')
