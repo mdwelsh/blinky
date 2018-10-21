@@ -32,6 +32,7 @@ var allmodes = [
   'fire',
   'candle',
   'flicker',
+  'phantom',
   'strobe',
   'rain',
   'comet',
