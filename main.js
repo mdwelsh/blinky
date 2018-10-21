@@ -30,6 +30,8 @@ var allmodes = [
   'rainbowcycle',
   'spackle',
   'fire',
+  'candle',
+  'flicker',
   'strobe',
   'rain',
   'comet',
@@ -145,7 +147,7 @@ function initEditor() {
   $("#editorNumPixelsSlider").slider({
     orientation: "horizontal",
     range: "min",
-    min: 100,
+    min: 72,
     max: 200,
     value: 120,
     slide: refreshSwatch,
@@ -158,13 +160,13 @@ function initEditor() {
     console.log('Editor save clicked');
     $("#editor").get()[0].close();
     var id = $("#editorStripId").text();
-    editStripDone(id);
+    editStripDone(id, false);
   });
   $('#editorSaveAll').click(function (e) {
-    console.log('Editor save clicked');
+    console.log('Editor save all clicked');
     $("#editor").get()[0].close();
     $.each(allStrips, function(id, strip) {
-      editStripDone(id);
+      editStripDone(id, true);
     });
   });
   $('#editorCancel').click(function (e) {
@@ -200,6 +202,9 @@ function editStripStart(id) {
   // Populate firmware version dropdown.
   var fwselect = $("#editorFirmwareSelect");
   fwselect.empty();
+  $('<option/>')
+    .text('current')
+    .appendTo(fwselect);
   for (var fw in firmwareVersions) {
     console.log('Adding fw to editor: ' + fw);
     $('<option/>')
@@ -239,7 +244,7 @@ function editStripStart(id) {
 }
 
 // Called when editing done.
-function editStripDone(id) {
+function editStripDone(id, editAll) {
   var strip = allStrips[id];
   if (strip == null) {
     console.log("Can't edit unknown strip: " + id);
@@ -247,13 +252,24 @@ function editStripDone(id) {
   }
 
   // Extract values from modal.
-  var name = $("#editorNameField").val();
+  //
+  // For some fields, if we are doing a global edit, don't override
+  // with the editor's values.
+  var name;
+  var numPixels;
+  if (editAll) {
+    name = strip.nextConfig.name;
+    numPixels = strip.curConfig.numPixels;
+  } else {
+    name = $("#editorNameField").val();
+    numPixels = $("#editorNumPixelsSlider").slider("value");
+  }
+    
   var version = $("#editorFirmwareSelect").find(':selected').text();
   var mode = $("#editorModeSelect").find(':selected').text();
   var speed = $("#editorSpeedSlider").slider("value");
   var brightness = $("#editorBrightnessSlider").slider("value");
   var colorChange = $("#editorColorChangeSlider").slider("value");
-  var numPixels = $("#editorNumPixelsSlider").slider("value");
   var red = $("#red").slider("value");
   var green = $("#green").slider("value");
   var blue = $("#blue").slider("value");
@@ -483,6 +499,12 @@ function updateStrip(id, stripdata) {
   $(e).find('#checkin').text(dateString);
 }
 
+// Return a string that is safe to use as an element ID
+// (in this case, replace ':' with '')
+function safeIdString(id) {
+  return id.replace(/:/g, '');
+}
+
 // Create a strip with the given ID.
 function createStrip(id) {
   console.log('Creating strip ' + id);
@@ -547,13 +569,16 @@ function createStrip(id) {
      .addClass('mdl-switch')
      .addClass('mdl-js-switch')
      .addClass('mdl-js-ripple-effect')
-     .attr('for', 'strip-enable')
+     .attr('for', 'strip-enable-'+safeIdString(id))
      .appendTo(sw);
   var inp = $('<input/>')
     .attr('type', 'checkbox')
-    .attr('id', 'strip-enable')
+    .attr('id', 'strip-enable-'+safeIdString(id))
     .addClass('mdl-switch__input')
-    .prop('checked', true)
+    .prop('checked', false)
+    .click(function(val) {
+      setStripEnabled(id, val.currentTarget.checked);
+    })
     .appendTo(lbl);
   var ls = $('<span/>')
     .addClass("mdl-switch__label")
@@ -706,6 +731,18 @@ function deleteStrip(id) {
     });
 }
 
+function setStripEnabled(stripid, value) {
+  console.log('Setting strip ' + stripid + ' enabled to ' + value);
+
+  var strip = allStrips[stripid];
+  if (strip == null) {
+    return;
+  }
+  var cfg = strip.nextConfig;
+  strip.nextConfig.enabled = value;
+  setConfig(stripid, strip.nextConfig);
+}
+
 function configToString(config) {
   if (config == undefined || config == null) {
     return "not yet known";
@@ -736,6 +773,9 @@ function configUpdate(snapshot) {
   }
   var e = strip.stripElem;
   strip.nextConfig = nextConfig;
+
+  // Update UI to reflect received config.
+  $(e).find("#name").text(nextConfig.name);
   var nme = $(e).find("#nextMode");
   $(nme).text(configToString(nextConfig));
   if (JSON.stringify(strip.curConfig) === JSON.stringify(nextConfig)) {
@@ -743,15 +783,19 @@ function configUpdate(snapshot) {
   } else {
     $(nme).addClass('pending');
   }
+
+  var enabled = $(e).find("#strip-enable-"+safeIdString(stripid))[0].parentElement.MaterialSwitch;
+  if (nextConfig.enabled) {
+    enabled.on();
+  } else {
+    enabled.off();
+  }
+
   $(nme).effect('highlight');
-  $(e).find("#name").text(nextConfig.name);
 }
 
 // Set the strip's config in the database.
 function setConfig(stripid, config) {
-  // Here we grab the global enabled flag and set it in the config.
-  config.enabled = $('#enableAll').is(':checked');
-
   console.log('Setting config of ' + stripid + ' to ' + JSON.stringify(config));
   var strip = allStrips[stripid];
   if (strip == null) {
