@@ -107,7 +107,7 @@ function initEditor() {
       .text(mode)
       .appendTo(select);
   });
-  
+
   // Fix up UI components for the rest of the editor.
   $("#editorSpeedSlider").slider({
     orientation: "horizontal",
@@ -206,7 +206,6 @@ function editStripStart(id) {
     .text('current')
     .appendTo(fwselect);
   for (var fw in firmwareVersions) {
-    console.log('Adding fw to editor: ' + fw);
     $('<option/>')
       .text(fw)
       .appendTo(fwselect);
@@ -230,6 +229,9 @@ function editStripStart(id) {
   console.log(config);
 
   $("#editorNameField").val(config.name);
+  // XXX MDW - Need to fix label overlapping with text.
+  //$("#editorName")[0].MaterialTextField.change();
+  
   $("#editorModeSelect").val(config.mode);
   $("#editorFirmwareSelect").val(config.version);
   $("#editorSpeedSlider").slider("value", config.speed);
@@ -333,8 +335,8 @@ function setup() {
 
     $("#log").empty();
     $("#striplist").empty();
-    $("#firmware").empty();
-    $("#about-tab-button")[0].click();
+    $("#firmwarelist").empty();
+    //$("#about-tab-button")[0].click();
 
   } else {
     showFullUI();
@@ -351,8 +353,8 @@ function setup() {
     globalsRef.on('value', globalsChanged, dbErrorCallback);
 
     firmwareVersionsRef = firebase.database().ref('firmware/');
-    firmwareVersionsRef.on('child_added', newFirmwareVersion, dbErrorCallback);
-    firmwareVersionsRef.on('child_changed', newFirmwareVersion, dbErrorCallback);
+    firmwareVersionsRef.on('child_added', firmwareUpdated, dbErrorCallback);
+    firmwareVersionsRef.on('child_changed', firmwareUpdated, dbErrorCallback);
   }
 }
 
@@ -374,12 +376,143 @@ function globalsChanged(snapshot) {
 }
 
 // Called when firmware/ DB entry changes.
-function newFirmwareVersion(snapshot) {
+function firmwareUpdated(snapshot) {
   var fwVersion = snapshot.key;
   var fwData = snapshot.val();
   console.log('Adding new firmware version: ' + fwVersion);
   console.log(fwData);
-  firmwareVersions[fwVersion] = fwData;
+
+  var fw = firmwareVersions[fwVersion];
+  if (fw == null) {
+    // This is a new firmware version.
+    createFirmwareVersion(fwVersion);
+  }
+
+  // Otherwise, just update it.
+  updateFirmwareVersion(fwVersion, fwData);
+}
+
+function createFirmwareVersion(fwVersion) {
+  // Create dummy firmware object.
+  var index = firmwareVersions.length;
+  index += 1;
+  var fw = {
+    version: fwVersion,
+    index: index,
+  };
+  firmwareVersions[fwVersion] = fw;
+
+  // Create UI card.
+  var container = $('#firmwarelist');
+  var cardline = $('<div/>')
+    .addClass('firmware-line')
+    .appendTo(container);
+  fw.cardElem = cardline;
+
+  var card = $('<div/>')
+    .addClass('firmware-card')
+    .addClass('mdl-card')
+    .addClass('mdl-shadow--2dp')
+    .attr('id', 'firmware-'+index)
+    .appendTo(cardline);
+  var cardtitle = $('<div/>')
+    .attr('id', 'firmware-title')
+    .addClass('mdl-card__title')
+    .appendTo(card);
+  var cardbody = $('<div/>')
+    .addClass('mdl-card__supporting-text')
+    .appendTo(card);
+
+  var tl = $('<div/>')
+    .addClass('firmware-title-line')
+    .appendTo(cardtitle);
+  var sid = $('<div/>')
+    .addClass('firmware-id')
+    .text(fwVersion)
+    .appendTo(tl);
+
+  // Status area.
+  var statusArea = $('<div/>')
+    .addClass('container')
+    .addClass('firmware-status')
+    .appendTo(cardbody);
+
+  $('<div/>')
+    .text('Date uploaded')
+    .appendTo(statusArea);
+  $('<div/>')
+    .attr('id', 'date')
+    .text('unknown')
+    .appendTo(statusArea);
+
+  $('<div/>')
+    .text('Hash')
+    .appendTo(statusArea);
+  $('<div/>')
+    .attr('id', 'hash')
+    .text('unknown')
+    .appendTo(statusArea);
+
+  $('<div/>')
+    .text('File')
+    .appendTo(statusArea);
+  $('<div/>')
+    .attr('id', 'url')
+    .text('unknown')
+    .appendTo(statusArea);
+
+  // Button group.
+  var bg = $('<div/>')
+    .addClass('firmware-card-buttons')
+    .appendTo(card);
+
+  $('<button/>')
+    .attr('type', 'button')
+    .attr('id', 'firmwareDeleteButton')
+    .addClass('mdl-button')
+    .addClass('mdl-js-button')
+    .addClass('mdl-button--icon')
+    .append($('<i/>').addClass('material-icons').text('delete'))
+    .click(function() {
+      deleteFirmwareStart(fwVersion);
+      $("#deleteFirmware").get()[0].showModal();
+    })
+    .appendTo(bg);
+  
+  // Needed for MD Lite to kick in.
+  componentHandler.upgradeElements(card.get());
+  return fw;
+}
+
+function updateFirmwareVersion(fwVersion, fwData) {
+  var fw = firmwareVersions[fwVersion];
+  if (fw == null) {
+    return;
+  }
+
+  // Update local state.
+  fw.hash = fwData.hash;
+  fw.url = fwData.url;
+  fw.dateUploaded = fwData.dateUploaded;
+
+  // Update the UI.
+  var e = fw.cardElem;
+  $(e).find('#firmware-title').effect('highlight');
+
+  $(e).find('#hash').text(fw.hash);
+  var link = $('<a/>')
+    .attr('href', fw.url)
+    .text(fw.url);
+  $(e).find('#url').empty();
+  $(e).find('#url').append(link);
+
+  var m = new moment(fw.dateUploaded);
+  dateString = m.format('MMM DD, h:mm:ss a') + ' (' + m.fromNow() + ')';
+  $(e).find('#date').text(dateString);
+}
+
+function deleteFirmwareStart(version) {
+  // XXX TODO
 }
 
 function currentUser() {
@@ -442,7 +575,7 @@ function showFullUI() {
 
   $("#log").empty();
   $("#striplist").empty();
-  $("#firmware").empty();
+  $("#firmwarelist").empty();
 }
 
 // Callback invoked when database returns new value for a strip.

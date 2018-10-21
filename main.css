@@ -222,9 +222,52 @@ body {
 #refreshButton {
   grid-column-start: refresh;
 }
-j
+
 #deleteButton {
   grid-column-start: delete
+}
+
+/* Firmware list UI */
+#firmwarelist {
+  padding-top: 10px;
+}
+
+.firmware-line {
+  margin-top: 10px;
+  justify-content: space-between;
+}
+
+.firmware-card {
+  width: 100%;
+}
+
+.firmware-title-line {
+  display: block;
+  width: 100%;
+}
+
+.strip-id {
+}
+
+.firmware-status {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  grid-row-gap: 5px;
+}
+
+.firmware-card-buttons {
+  margin: 20px;
+  display: grid;
+  grid-template-columns: [delete] 80px;
+  width: 90%;
+}
+
+.firmware-card-buttons > button {
+  justify-self: left;
+}
+
+#firmwareDeleteButton {
+  grid-column-start: delete;
 }
 
 /* Editor UI */
