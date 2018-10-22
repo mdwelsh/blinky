@@ -156,7 +156,7 @@ function initEditor() {
   });
   refreshSwatch();
 
-  // Handle editor completion.
+  // Editor UI completion actions.
   $('#editorSave').click(function (e) {
     console.log('Editor save clicked');
     $("#editor").get()[0].close();
@@ -177,7 +177,7 @@ function initEditor() {
     $("#editor").get()[0].close();
   });
 
-  // Handle deletion completion.
+  // Delete device actions.
   $('#deleteStripConfirm').click(function (e) {
     $("#deleteStrip").get()[0].close();
     deleteStripDone();
@@ -187,6 +187,33 @@ function initEditor() {
   });
   $('#deleteStripClose').click(function (e) {
     $("#deleteStrip").get()[0].close();
+  });
+
+  // Upload firmware actions.
+  $('#firmwareUploadButton').click(function (e) {
+    $("#uploadFirmware").get()[0].showModal();
+  });
+  $('#uploadFirmwareDone').click(function (e) {
+    $("#uploadFirmware").get()[0].close();
+    firmwareUploadDone();
+  });
+  $('#uploadFirmwareCancel').click(function (e) {
+    $("#uploadFirmware").get()[0].close();
+  });
+  $('#uploadFirmwareClose').click(function (e) {
+    $("#uploadFirmware").get()[0].close();
+  });
+
+  // Delete firmware actions.
+  $('#deleteFirmwareConfirm').click(function (e) {
+    $("#deleteFirmware").get()[0].close();
+    deleteFirmwareDone();
+  });
+  $('#deleteFirmwareCancel').click(function (e) {
+    $("#deleteFirmware").get()[0].close();
+  });
+  $('#deleteFirmwareClose').click(function (e) {
+    $("#deleteFirmware").get()[0].close();
   });
 }
 
@@ -513,7 +540,15 @@ function updateFirmwareVersion(fwVersion, fwData) {
 }
 
 function deleteFirmwareStart(version) {
-  // XXX TODO
+  $("#deleteFirmwareVersion").text(version);
+}
+
+function deleteFirmwareDone() {
+  // XXX TODO - Get version number from UI and delete it.
+}
+
+function firmwareUploadDone() {
+  // XXX TODO - ???
 }
 
 function currentUser() {

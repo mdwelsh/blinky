@@ -209,22 +209,17 @@
 <div class="mdl-dialog__actions">
   <div role="group">
     <button id="editorCancel" type="button" class="mdl-button">Cancel</button>
-    <button id="editorSave" type="button" class="mdl-button">Apply</button>
-    <button id="editorSaveAll" type="button" class="mdl-button">Apply to all</button>
+    <button id="editorSave" type="button" class="mdl-button mdl-button--raised mdl-button--colored">Apply</button>
+    <button id="editorSaveAll" type="button" class="mdl-button mdl-button--raised mdl-button--accent">Apply to all</button>
   </div>
 </div>
 </dialog>
 
-<!-- Delete device  dialog modal -->
+<!-- Delete device dialog modal -->
 <dialog id="deleteStrip" class="mdl-dialog">
 <div class="deleteStripHeader">
   <div class="mdl-dialog__title" id="deleteStripTitle">
     Delete device <span id="deleteStripId"></span>
-  </div>
-  <div>
-    <button id="deleteStripClose" type="button" class="mdl-button mdl-js-button mdl-button--icon">
-      <i class="material-icons">close</i>
-    </button>
   </div>
 </div>
 <!-- Delete device body -->
@@ -234,7 +229,52 @@
 <div class="mdl-dialog__actions">
   <div role="group">
     <button id="deleteStripCancel" type="button" class="mdl-button">Cancel</button>
-    <button id="deleteStripConfirm" type="button" class="mdl-button">Delete</button>
+    <button id="deleteStripConfirm" type="button" class="mdl-button mdl-button--raised mdl-button--accent">Delete</button>
+  </div>
+</div>
+</dialog>
+
+<!-- Upload firmware dialog modal -->
+<dialog id="uploadFirmware" class="mdl-dialog">
+<div class="uploadFirmwareHeader">
+  <div class="mdl-dialog__title" id="uploadFirmwareTitle">
+    Upload firmware
+  </div>
+</div>
+<!-- Upload firmware body -->
+<div class="mdl-dialog__content" id="uploadFirmwareBody">
+  <div id="firmwareFilename" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <div>
+      <label for="firmwareFilenameField" class="mdl-textfield__label">File</label>
+    </div>
+    <div>
+      <input type="text" class="mdl-textfield__input" id="firmwareFilenameField"></input>
+    </div>
+  </div>
+</div>
+<div class="mdl-dialog__actions">
+  <div role="group">
+    <button id="uploadFirmwareCancel" type="button" class="mdl-button">Cancel</button>
+    <button id="uploadFirmwareConfirm" type="button" class="mdl-button mdl-button--raised mdl-button--colored">Upload</button>
+  </div>
+</div>
+</dialog>
+
+<!-- Delete firmware dialog modal -->
+<dialog id="deleteFirmware" class="mdl-dialog">
+<div class="deleteFirmwareHeader">
+  <div class="mdl-dialog__title" id="deleteFirmwareTitle">
+    Delete firmware <span id="deleteFirmwareVersion"></span>
+  </div>
+</div>
+<!-- Delete firmware body -->
+<div class="mdl-dialog__content" id="deleteFirmwareBody">
+  Are you sure you want to delete this firmware version?
+</div>
+<div class="mdl-dialog__actions">
+  <div role="group">
+    <button id="deleteFirmwareCancel" type="button" class="mdl-button">Cancel</button>
+    <button id="deleteFirmwareConfirm" type="button" class="mdl-button mdl-button--raised mdl-button--accent">Delete</button>
   </div>
 </div>
 </dialog>

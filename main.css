@@ -318,7 +318,6 @@ body {
 }
 
 /* Firmware UI */
-
 #firmwareUploadButton {
   position: fixed;
   right: 24px;
@@ -328,4 +327,35 @@ body {
   z-index: 998;
 }
 
+#uploadFirmware {
+  width: 80%;
+}
+
+.uploadFirmwareHeader {
+  display: grid;
+  grid-template-columns: 90% 10%;
+  width: 100%;
+}
+
+#uploadFirmwareTitle {
+  font-size: 16px;
+}
+
+#deleteFirmware {
+  width: 80%;
+}
+
+.deleteFirmwareHeader {
+  display: grid;
+  grid-template-columns: 90% 10%;
+  width: 100%;
+}
+
+.deleteFirmwareHeader > button {
+  justify-self: right;
+}
+
+#deleteFirmwareTitle {
+  font-size: 16px;
+}
 
