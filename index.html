@@ -238,24 +238,20 @@
 <dialog id="uploadFirmware" class="mdl-dialog">
 <div class="uploadFirmwareHeader">
   <div class="mdl-dialog__title" id="uploadFirmwareTitle">
-    Upload firmware
+    Add firmware version
   </div>
 </div>
 <!-- Upload firmware body -->
 <div class="mdl-dialog__content" id="uploadFirmwareBody">
-  <div id="firmwareFilename" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-    <div>
-      <label for="firmwareFilenameField" class="mdl-textfield__label">File</label>
-    </div>
-    <div>
-      <input type="text" class="mdl-textfield__input" id="firmwareFilenameField"></input>
-    </div>
-  </div>
+  <label class="mdl-button mdl-button--colored mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+    Choose file <input id="uploadFirmwareFile" type="file" style="display: none;">
+  </label>
+  <div class="uploadFirmwareSelectedFile" id="#uploadFirmwareSelectedFile">selected file goes here</div>
 </div>
 <div class="mdl-dialog__actions">
   <div role="group">
     <button id="uploadFirmwareCancel" type="button" class="mdl-button">Cancel</button>
-    <button id="uploadFirmwareConfirm" type="button" class="mdl-button mdl-button--raised mdl-button--colored">Upload</button>
+    <button id="uploadFirmwareConfirm" type="button" class="mdl-button mdl-button--raised mdl-button--colored">Add</button>
   </div>
 </div>
 </dialog>

@@ -203,6 +203,10 @@ function initEditor() {
   $('#uploadFirmwareClose').click(function (e) {
     $("#uploadFirmware").get()[0].close();
   });
+  $('#uploadFirmwareFile').change(function() {
+    var file = $('#uploadFirmwareFile')[0].files[0];
+    uploadFirmware(file);
+  });
 
   // Delete firmware actions.
   $('#deleteFirmwareConfirm').click(function (e) {
@@ -537,6 +541,35 @@ function updateFirmwareVersion(fwVersion, fwData) {
   var m = new moment(fw.dateUploaded);
   dateString = m.format('MMM DD, h:mm:ss a') + ' (' + m.fromNow() + ')';
   $(e).find('#date').text(dateString);
+}
+
+function uploadFirmware(file) {
+  console.log('Attempting to upload:');
+  console.log(file);
+  var reader = new FileReader();
+  reader.onloadend = function () {
+    uploadFirmwareFinished(reader.result);
+  }
+  reader.readAsBinaryString(file);
+  console.log('Done uploading');
+}
+
+function getFirmwareVersion(blob) {
+  var enc = new TextDecoder("utf-8");
+  // XXX MDW STOPPED HERE -- Need this to be an ArrayBuffer.
+  var s = enc.decode(blob);
+  var re = new RegExp("__Bl!nky__ [^_]+ ___");
+  var result = re.exec(s);
+  console.log("Result:");
+  console.log(result);
+  console.log("Matched:");
+  console.log(result[0]); // MDW THIS IS IT!!!
+}
+
+function uploadFirmwareFinished(blob) {
+  console.log('Uploaded file:');
+  console.log(blob);
+  getFirmwareVersion(blob);
 }
 
 function deleteFirmwareStart(version) {
