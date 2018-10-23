@@ -364,6 +364,22 @@ body {
   font-size: 16px;
 }
 
+#uploadFirmwareSelectedFile {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+#uploadFirmwareError {
+  margin-top: 5px;
+  font-size: 12px;
+  color: red;
+}
+
+#uploadFirmwareVersion {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
 #deleteFirmware {
   width: 80%;
 }

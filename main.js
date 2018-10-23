@@ -48,6 +48,7 @@ var firmwareVersions = {};
 var logRef = null;
 var globalsRef = null;
 var firmwareVersionsRef = null;
+var storageRef = null;
 
 // Initialize click handlers.
 $('#login').off('click');
@@ -58,11 +59,6 @@ $('#showLogButton').click(function () {
   $("#log").toggle();
 });
 $('#enableAll').change(enableAllToggled);
-$('#testButton').click(function() {
-  //  var d = document.getElementById('testDialog');
-  var d = $('#testDialog').get()[0];
-  d.showModal();
-});
 
 initEditor();
 setup();
@@ -158,13 +154,11 @@ function initEditor() {
 
   // Editor UI completion actions.
   $('#editorSave').click(function (e) {
-    console.log('Editor save clicked');
     $("#editor").get()[0].close();
     var id = $("#editorStripId").text();
     editStripDone(id, false);
   });
   $('#editorSaveAll').click(function (e) {
-    console.log('Editor save all clicked');
     $("#editor").get()[0].close();
     $.each(allStrips, function(id, strip) {
       editStripDone(id, true);
@@ -191,9 +185,10 @@ function initEditor() {
 
   // Upload firmware actions.
   $('#firmwareUploadButton').click(function (e) {
+    uploadFirmwareStart();
     $("#uploadFirmware").get()[0].showModal();
   });
-  $('#uploadFirmwareDone').click(function (e) {
+  $('#uploadFirmwareConfirm').click(function (e) {
     $("#uploadFirmware").get()[0].close();
     firmwareUploadDone();
   });
@@ -223,7 +218,6 @@ function initEditor() {
 
 // Called when editor opened for a strip.
 function editStripStart(id) {
-  console.log('editStripStart: ' + id);
   var strip = allStrips[id];
   if (strip == null) {
     console.log("Warning - editing unknown strip " + id);
@@ -251,11 +245,9 @@ function editStripStart(id) {
       console.log("Warning - no cur or next config for strip yet: " + id);
       return;
     } else {
-      console.log("Using cur config");
       config = strip.curConfig;
     }
   } else {
-    console.log("Using next config");
     config = strip.nextConfig;
   }
   console.log(config);
@@ -319,7 +311,6 @@ function editStripDone(id, editAll) {
     green: green,
     blue: blue,
   };
-  console.log('New config: ' + JSON.stringify(newConfig));
   setConfig(id, newConfig);
 }
 
@@ -358,7 +349,6 @@ function refreshSwatch() {
 // Set up initial UI elements.
 function setup() {
   if (currentUser() == null) {
-    console.log("Not logged in");
     // Not logged in yet.
     showLoginButton();
     logRef = null;
@@ -368,7 +358,6 @@ function setup() {
     $("#log").empty();
     $("#striplist").empty();
     $("#firmwarelist").empty();
-    //$("#about-tab-button")[0].click();
 
   } else {
     showFullUI();
@@ -387,14 +376,15 @@ function setup() {
     firmwareVersionsRef = firebase.database().ref('firmware/');
     firmwareVersionsRef.on('child_added', firmwareUpdated, dbErrorCallback);
     firmwareVersionsRef.on('child_changed', firmwareUpdated, dbErrorCallback);
+
+    var storage = firebase.storage();
+    storageRef = storage.ref();
   }
 }
 
 // Called when globals/ DB entry changes.
 function globalsChanged(snapshot) {
   globals = snapshot.val();
-  console.log('Received new globals:');
-  console.log(globals);
 
   // Update UI. This is a little wonky and undocumented MDLite behavior.
   var enableAll = $("#enableAll")[0].parentElement.MaterialSwitch;
@@ -478,14 +468,6 @@ function createFirmwareVersion(fwVersion) {
     .appendTo(statusArea);
 
   $('<div/>')
-    .text('Hash')
-    .appendTo(statusArea);
-  $('<div/>')
-    .attr('id', 'hash')
-    .text('unknown')
-    .appendTo(statusArea);
-
-  $('<div/>')
     .text('File')
     .appendTo(statusArea);
   $('<div/>')
@@ -543,33 +525,89 @@ function updateFirmwareVersion(fwVersion, fwData) {
   $(e).find('#date').text(dateString);
 }
 
+var uploadedFile = null;
+var uploadedFirmwareVersion = null;
+var uploadedFirmwareUrl = null;
+
+function uploadFirmwareStart() {
+  $('#uploadFirmwareSelectedFile').empty();
+  $('#uploadFirmwareError').empty();
+  $('#uploadFirmwareVersion').empty();
+  $('#uploadFirmwareLink').empty();
+  $('#uploadFirmwareSpinner').hide();
+}
+
 function uploadFirmware(file) {
-  console.log('Attempting to upload:');
-  console.log(file);
+  uploadedFile = file;
+  $('#uploadFirmwareConfirm').prop('disabled', true); 
+  $('#uploadFirmwareSelectedFile').text('File: ' + file.name);
+  $('#uploadFirmwareError').empty();
+  $('#uploadFirmwareVersion').empty();
+  $('#uploadFirmwareLink').empty();
+
   var reader = new FileReader();
-  reader.onloadend = function () {
+  reader.onloadend = function() {
     uploadFirmwareFinished(reader.result);
   }
-  reader.readAsBinaryString(file);
-  console.log('Done uploading');
+  reader.readAsArrayBuffer(file);
 }
 
-function getFirmwareVersion(blob) {
+function getFirmwareVersion(data) {
   var enc = new TextDecoder("utf-8");
-  // XXX MDW STOPPED HERE -- Need this to be an ArrayBuffer.
-  var s = enc.decode(blob);
+  var s = enc.decode(data);
   var re = new RegExp("__Bl!nky__ [^_]+ ___");
   var result = re.exec(s);
-  console.log("Result:");
-  console.log(result);
-  console.log("Matched:");
-  console.log(result[0]); // MDW THIS IS IT!!!
+  if (result == null) {
+    return null;
+  }
+  return result[0];
 }
 
-function uploadFirmwareFinished(blob) {
-  console.log('Uploaded file:');
-  console.log(blob);
-  getFirmwareVersion(blob);
+function uploadFirmwareFinished(data) {
+  uploadedFirmwareVersion = getFirmwareVersion(data);
+  if (uploadedFirmwareVersion == null) {
+    $('#uploadFirmwareError')
+      .text('File missing magic version string. Is this a Blinky binary?');
+    uploadedFirmware = null;
+    return;
+  }
+
+  // Valid binary - make it possible to add.
+  console.log('Got firmware version: ' + uploadedFirmwareVersion);
+  $('#uploadFirmwareVersion').text('Version string: ' + uploadedFirmwareVersion);
+  $('#uploadFirmwareConfirm').prop('disabled', false);
+
+  // Start the upload.
+  $('#uploadFirmwareSpinner').show();
+  var fname = uploadedFile.name + ' ' + uploadedFirmwareVersion;
+  console.log('Starting upload of ' + fname);
+  var uploadRef = storageRef.child(fname);
+  uploadRef.put(uploadedFile).then(function(snapshot) {
+    // Upload done.
+    $('#uploadFirmwareSpinner').hide();
+    console.log('Upload complete');
+    // Add link.
+    uploadRef.getDownloadURL().then(function(url) {
+      uploadedFirmwareUrl = url;
+      $('#uploadFirmwareLink').html('Uploaded: <a href="'+url+'">'+fname+'</a>');
+    });
+  });
+}
+
+function firmwareUploadDone() {
+  var dbRef = firebase.database().ref('firmware/' + uploadedFirmwareVersion);
+  var metadata = {
+    dateUploaded: firebase.database.ServerValue.TIMESTAMP,
+    version: uploadedFirmwareVersion,
+    filename: uploadedFile.name + ' ' + uploadedFirmwareVersion,
+    url: uploadedFirmwareUrl,
+  };
+  dbRef.set(metadata).then(function() {
+    addLogEntry('added firmware '+uploadedFirmwareVersion);
+  })
+  .catch(function(error) {
+    $('#uploadFirmwareError').text(error.message);
+  });
 }
 
 function deleteFirmwareStart(version) {
@@ -578,10 +616,6 @@ function deleteFirmwareStart(version) {
 
 function deleteFirmwareDone() {
   // XXX TODO - Get version number from UI and delete it.
-}
-
-function firmwareUploadDone() {
-  // XXX TODO - ???
 }
 
 function currentUser() {
@@ -649,16 +683,12 @@ function showFullUI() {
 
 // Callback invoked when database returns new value for a strip.
 function stripCheckin(snapshot) {
-  console.log('Strip checkin with key ' + snapshot.key);
   var stripid = snapshot.key;
   updateStrip(stripid, snapshot.val());
 }
 
 // Update the local strip state with the received data from checkin.
 function updateStrip(id, stripdata) {
-  console.log('updateStrip for ' + id);
-  console.log(stripdata);
-
   var strip = allStrips[id];
   if (strip == null) {
     // This is a new strip.
@@ -670,7 +700,6 @@ function updateStrip(id, stripdata) {
   }
 
   // Update local state.
-  console.log("Setting strip config to: " + JSON.stringify(stripdata.config));
   strip.curConfig = stripdata.config;
   strip.ip = stripdata.ip;
   strip.rssi = stripdata.rssi;
@@ -694,7 +723,6 @@ function updateStrip(id, stripdata) {
   }
   $(e).find('#ip').text(stripdata.ip);
   $(e).find('#version').text(stripdata.version);
-  console.log($(e).find('#rssi'));
   $(e).find('#rssi').text(stripdata.rssi + ' dBm');
   var m = new moment(strip.lastCheckin);
   dateString = m.format('MMM DD, h:mm:ss a') + ' (' + m.fromNow() + ')';
@@ -709,9 +737,6 @@ function safeIdString(id) {
 
 // Create a strip with the given ID.
 function createStrip(id) {
-  console.log('Creating strip ' + id);
-
-  console.log('Registering database ref for strip ' + id);
   var dbRef = firebase.database().ref('strips/' + id);
   dbRef.on('value', configUpdate, dbErrorCallback);
 
@@ -911,8 +936,6 @@ function deleteStripDone() {
 }
 
 function deleteStrip(id) {
-  console.log("Deleting strip: " + id);
-
   var strip = allStrips[id];
   if (strip == null) {
     console.log('No such strip to delete: ' + id);
@@ -934,8 +957,6 @@ function deleteStrip(id) {
 }
 
 function setStripEnabled(stripid, value) {
-  console.log('Setting strip ' + stripid + ' enabled to ' + value);
-
   var strip = allStrips[stripid];
   if (strip == null) {
     return;
@@ -962,11 +983,8 @@ function configToString(config) {
 
 // Callback invoked when strip's config has changed from the DB.
 function configUpdate(snapshot) {
-  console.log('configUpdate called for key ' + snapshot.key);
   var stripid = snapshot.key;
   var nextConfig = snapshot.val();
-  console.log('got nextConfig:');
-  console.log(nextConfig);
 
   var strip = allStrips[stripid];
   if (strip == null) {
@@ -998,7 +1016,6 @@ function configUpdate(snapshot) {
 
 // Set the strip's config in the database.
 function setConfig(stripid, config) {
-  console.log('Setting config of ' + stripid + ' to ' + JSON.stringify(config));
   var strip = allStrips[stripid];
   if (strip == null) {
     return;

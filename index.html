@@ -84,16 +84,16 @@
 
   <header class="mdl-layout__header">
     <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
-      <a id="devices-tab-button" href="#scroll-tab-devices" class="mdl-layout__tab is-active">Devices</a>
+      <a id="devices-tab-button" href="#scroll-tab-devices" class="mdl-layout__tab">Devices</a>
       <a id="firmware-tab-button" href="#scroll-tab-firmware" class="mdl-layout__tab">Firmware</a>
       <a id="log-tab-button" href="#scroll-tab-log" class="mdl-layout__tab">Log</a>
-      <a id="about-tab-button" href="#scroll-tab-about" class="mdl-layout__tab">About</a>
+      <a id="about-tab-button" href="#scroll-tab-about" class="mdl-layout__tab is-active">About</a>
     </div>
   </header>
 
   <main class="mdl-layout__content">
 
-    <section class="mdl-layout__tab-panel is-active" id="scroll-tab-devices">
+    <section class="mdl-layout__tab-panel" id="scroll-tab-devices">
       <div class="tab-contents">
         <div id="global">
           <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="enableAll">
@@ -121,7 +121,7 @@
       </div>
     </section>
 
-    <section class="mdl-layout__tab-panel" id="scroll-tab-about">
+    <section class="mdl-layout__tab-panel is-active" id="scroll-tab-about">
       <div class="tab-contents">
         <p>
           <span class="titlesmall">
@@ -238,7 +238,7 @@
 <dialog id="uploadFirmware" class="mdl-dialog">
 <div class="uploadFirmwareHeader">
   <div class="mdl-dialog__title" id="uploadFirmwareTitle">
-    Add firmware version
+    Upload firmware
   </div>
 </div>
 <!-- Upload firmware body -->
@@ -246,12 +246,16 @@
   <label class="mdl-button mdl-button--colored mdl-js-button mdl-button--raised mdl-js-ripple-effect">
     Choose file <input id="uploadFirmwareFile" type="file" style="display: none;">
   </label>
-  <div class="uploadFirmwareSelectedFile" id="#uploadFirmwareSelectedFile">selected file goes here</div>
+  <div class="uploadFirmwareSelectedFile" id="uploadFirmwareSelectedFile"></div>
+  <div class="uploadFirmwareError" id="uploadFirmwareError"></div>
+  <div class="uploadFirmwareVersion" id="uploadFirmwareVersion"></div>
+  <div id="uploadFirmwareSpinner" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+  <div id="uploadFirmwareLink"></div>
 </div>
 <div class="mdl-dialog__actions">
   <div role="group">
     <button id="uploadFirmwareCancel" type="button" class="mdl-button">Cancel</button>
-    <button id="uploadFirmwareConfirm" type="button" class="mdl-button mdl-button--raised mdl-button--colored">Add</button>
+    <button id="uploadFirmwareConfirm" type="button" class="mdl-button mdl-button--raised mdl-button--colored" disabled>Add</button>
   </div>
 </div>
 </dialog>
