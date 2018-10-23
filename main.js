@@ -260,6 +260,8 @@ function editStripDone(id, editAll) {
     numPixels = $("#editorNumPixelsSlider").slider("value");
   }
     
+  // Don't change the enabled state when editing.
+  var enabled = strip.curConfig.enabled;
   var version = $("#editorFirmwareSelect").find(':selected').text();
   var mode = $("#editorModeSelect").find(':selected').text();
   var speed = $("#editorSpeedSlider").slider("value");
@@ -269,6 +271,7 @@ function editStripDone(id, editAll) {
   var green = $("#green").slider("value");
   var blue = $("#blue").slider("value");
   var newConfig = {
+    enabled: enabled,
     version: version,
     name: name,
     mode: mode,
