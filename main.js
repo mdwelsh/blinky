@@ -63,37 +63,6 @@ $('#enableAll').change(enableAllToggled);
 initEditor();
 setup();
 
-// MDW TESTING STORAGE STUFF
-/*
-var storage = firebase.storage();
-var storageRef = storage.ref();
-var fwRef = storageRef.child('Blinky.ino.bin');
-var fwUrl = fwRef.getDownloadURL().then(function(fwUrl) {
-  console.log('Firmware URL: ');
-  console.log(fwUrl);
-
-  var xhr = new XMLHttpRequest();
-  xhr.responseType = 'arraybuffer';
-  xhr.onload = function(event) {
-    var arrayBuffer = xhr.response;
-    var byteArray = new Uint8Array(arrayBuffer);
-    console.log('Received:');
-    console.log(byteArray);
-    var enc = new TextDecoder("utf-8");
-    var s = enc.decode(byteArray);
-    var re = new RegExp("__Bl!nky__ [^_]+ ___");
-    var result = re.exec(s);
-    console.log("Matched:");
-    console.log(result[0]); // MDW THIS IS IT!!!
-  };
-  xhr.open('GET', fwUrl);
-  xhr.send();
-  console.log('Done with fw fetch');
-
-  var reader = new FileReader();
-});
-*/
-
 function initEditor() {
   var editor = $("#editorMode");
 
@@ -615,7 +584,17 @@ function deleteFirmwareStart(version) {
 }
 
 function deleteFirmwareDone() {
-  // XXX TODO - Get version number from UI and delete it.
+  var version = $("#deleteFirmwareVersion").text();
+  console.log('Deleting firmware: ' + version);
+
+  // Remove firmware state.
+  ref = firebase.database().ref('firmware/' + version);
+  ref.remove().then(function() {
+    var ce = firmwareVersions[version].cardElem;
+    ce.remove();
+    firmwareVersions[version] = null;
+    addLogEntry("deleted firmware " + version);
+  });
 }
 
 function currentUser() {
