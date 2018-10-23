@@ -197,6 +197,8 @@ function editStripStart(id) {
   $("#red")[0].MaterialSlider.change(config.red);
   $("#green")[0].MaterialSlider.change(config.green);
   $("#blue")[0].MaterialSlider.change(config.blue);
+
+  refreshSwatch();
 }
 
 // Called when editing done.
