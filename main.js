@@ -74,51 +74,14 @@ function initEditor() {
       .appendTo(select);
   });
 
-  // Fix up UI components for the rest of the editor.
-  $("#editorSpeedSlider").slider({
-    orientation: "horizontal",
-    range: "min",
-    min: 0,
-    max: 200,
-    value: 100,
-    slide: refreshSwatch,
-    change: refreshSwatch
-  });
-  $("#editorBrightnessSlider").slider({
-    orientation: "horizontal",
-    range: "min",
-    min: 0,
-    max: 255,
-    value: 128,
-    slide: refreshSwatch,
-    change: refreshSwatch
-  });
-  $("#red, #green, #blue").slider({
-    orientation: "horizontal",
-    range: "min",
-    max: 255,
-    value: 127,
-    slide: refreshSwatch,
-    change: refreshSwatch
-  });
-  $("#editorColorChangeSlider").slider({
-    orientation: "horizontal",
-    range: "min",
-    min: 0,
-    max: 100,
-    value: 0,
-    slide: refreshSwatch,
-    change: refreshSwatch
-  });
-  $("#editorNumPixelsSlider").slider({
-    orientation: "horizontal",
-    range: "min",
-    min: 72,
-    max: 200,
-    value: 120,
-    slide: refreshSwatch,
-    change: refreshSwatch
-  });
+  $("#editorSpeedSlider").change(refreshSwatch);
+  $("#editorBrightnessSlider").change(refreshSwatch);
+  $("#red").change(refreshSwatch);
+  $("#green").change(refreshSwatch);
+  $("#blue").change(refreshSwatch);
+  $("#editorColorChangeSlider").change(refreshSwatch);
+  $("#editorNumPixelsSlider").change(refreshSwatch);
+
   refreshSwatch();
 
   // Editor UI completion actions.
@@ -224,18 +187,16 @@ function editStripStart(id) {
   $("#editorNameField").val(config.name);
   // XXX MDW - Need to fix label overlapping with text.
   //$("#editorName")[0].MaterialTextField.change();
-  
   $("#editorModeSelect").val(config.mode);
   $("#editorFirmwareSelect").val(config.version);
-  $("#editorSpeedSlider").slider("value", config.speed);
-  $("#editorBrightnessSlider").slider("value", config.brightness);
-  $("#editorColorChangeSlider").slider("value", config.colorChange);
-  if (config.numPixels != undefined) {
-    $("#editorNumPixelsSlider").slider("value", config.numPixels);
-  }
-  $("#red").slider("value", config.red);
-  $("#green").slider("value", config.green);
-  $("#blue").slider("value", config.blue);
+
+  $("#editorSpeedSlider")[0].MaterialSlider.change(config.speed);
+  $("#editorBrightnessSlider")[0].MaterialSlider.change(config.brightness);
+  $("#editorColorChangeSlider")[0].MaterialSlider.change(config.colorChange);
+  $("#editorNumPixelsSlider")[0].MaterialSlider.change(config.numPixels);
+  $("#red")[0].MaterialSlider.change(config.red);
+  $("#green")[0].MaterialSlider.change(config.green);
+  $("#blue")[0].MaterialSlider.change(config.blue);
 }
 
 // Called when editing done.
@@ -257,19 +218,19 @@ function editStripDone(id, editAll) {
     numPixels = strip.curConfig.numPixels;
   } else {
     name = $("#editorNameField").val();
-    numPixels = $("#editorNumPixelsSlider").slider("value");
+    numPixels = parseInt($("#editorNumPixelsSlider").val());
   }
     
   // Don't change the enabled state when editing.
   var enabled = strip.curConfig.enabled;
   var version = $("#editorFirmwareSelect").find(':selected').text();
   var mode = $("#editorModeSelect").find(':selected').text();
-  var speed = $("#editorSpeedSlider").slider("value");
-  var brightness = $("#editorBrightnessSlider").slider("value");
-  var colorChange = $("#editorColorChangeSlider").slider("value");
-  var red = $("#red").slider("value");
-  var green = $("#green").slider("value");
-  var blue = $("#blue").slider("value");
+  var speed = parseInt($("#editorSpeedSlider").val());
+  var brightness = parseInt($("#editorBrightnessSlider").val());
+  var colorChange = parseInt($("#editorColorChangeSlider").val());
+  var red = parseInt($("#red").val());
+  var green = parseInt($("#green").val());
+  var blue = parseInt($("#blue").val());
   var newConfig = {
     enabled: enabled,
     version: version,
@@ -302,19 +263,19 @@ function hexFromRGB(r, g, b) {
 }
 
 function refreshSwatch() {
-  var red = $("#red").slider("value");
-  var green = $("#green").slider("value");
-  var blue = $("#blue").slider("value");
+  var red = parseInt($("#red").val());
+  var green = parseInt($("#green").val());
+  var blue = parseInt($("#blue").val());
   var hex = hexFromRGB(red, green, blue);
   $("#swatch").css("background-color", "#" + hex);
 
-  var speed = $("#editorSpeedSlider").slider("value");
+  var speed = $("#editorSpeedSlider").val();
   $("#speedIndicator").text(speed);
-  var brightness = $("#editorBrightnessSlider").slider("value");
+  var brightness = $("#editorBrightnessSlider").val();
   $("#brightnessIndicator").text(brightness);
-  var colorChange = $("#editorColorChangeSlider").slider("value");
+  var colorChange = $("#editorColorChangeSlider").val();
   $("#colorChangeIndicator").text(colorChange);
-  var numPixels = $("#editorNumPixelsSlider").slider("value");
+  var numPixels = $("#editorNumPixelsSlider").val();
   $("#numPixelsIndicator").text(numPixels);
 }
 

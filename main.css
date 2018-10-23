@@ -285,10 +285,6 @@ body {
   font-size: 16px;
 }
 
-#red, #green, #blue, #editorSpeedSlider, #editorBrightnessSlider, #editorColorChangeSlider, #editorNumPixelsSlider {
-  width: 80%;
-  margin: 15px;
-}
 #swatch {
   width: 20%;
   height: 30px;
