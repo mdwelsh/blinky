@@ -35,6 +35,9 @@ var allmodes = [
   'phantom',
   'strobe',
   'rain',
+  'snow',
+  'sparkle',
+  'halloween',
   'comet',
 ];
 
