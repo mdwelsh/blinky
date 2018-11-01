@@ -1,0 +1,24 @@
+{
+  "rules": {
+    "log": {
+      ".read": "auth != null && (auth.uid == '4ECy9wybFrh3PFJnywu0RcgXrKG2' || auth.uid == '845am8oH7mZVqAeKuEQVr9pWusO2' || auth.uid == 'LwEVWz3GAJbemU6n2bFz9WSbqVK2')",
+      ".write": "auth != null && (auth.uid == '4ECy9wybFrh3PFJnywu0RcgXrKG2' || auth.uid == '845am8oH7mZVqAeKuEQVr9pWusO2' || auth.uid == 'LwEVWz3GAJbemU6n2bFz9WSbqVK2')",
+    },
+    "globals": {
+      ".read": "auth != null && (auth.uid == '4ECy9wybFrh3PFJnywu0RcgXrKG2' || auth.uid == '845am8oH7mZVqAeKuEQVr9pWusO2' || auth.uid == 'LwEVWz3GAJbemU6n2bFz9WSbqVK2')",
+      ".write": "auth != null && (auth.uid == '4ECy9wybFrh3PFJnywu0RcgXrKG2' || auth.uid == '845am8oH7mZVqAeKuEQVr9pWusO2' || auth.uid == 'LwEVWz3GAJbemU6n2bFz9WSbqVK2')",
+    },
+    "strips": {
+      ".read": true,
+      ".write": "auth != null && (auth.uid == '4ECy9wybFrh3PFJnywu0RcgXrKG2' || auth.uid == '845am8oH7mZVqAeKuEQVr9pWusO2' || auth.uid == 'LwEVWz3GAJbemU6n2bFz9WSbqVK2')",  
+    },
+    "firmware": {
+      ".read": true,
+      ".write": "auth != null && (auth.uid == '4ECy9wybFrh3PFJnywu0RcgXrKG2' || auth.uid == '845am8oH7mZVqAeKuEQVr9pWusO2' || auth.uid == 'LwEVWz3GAJbemU6n2bFz9WSbqVK2')",  
+    },
+    "checkin": {
+      ".read": "auth != null && (auth.uid == '4ECy9wybFrh3PFJnywu0RcgXrKG2' || auth.uid == '845am8oH7mZVqAeKuEQVr9pWusO2' || auth.uid == 'LwEVWz3GAJbemU6n2bFz9WSbqVK2')",
+      ".write": true,
+    }
+  },
+}
