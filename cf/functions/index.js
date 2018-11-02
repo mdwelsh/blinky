@@ -19,13 +19,45 @@ app.intent('Try me', conv => {
   conv.ask('You wanted to try me. Okay then.');
 });
 
+// Set the given 'elem' on each device  to 'val'.
+function setAllDevices(elem, val) {
+  var allKeys = [];
+  var stripsQuery = admin.database().ref("strips").orderByKey();
+  return stripsQuery
+    .once("value")
+    .then(function(snapshot) {
+      console.log('Iterating over all devices');
+      snapshot.forEach(function(childSnapshot) {
+        var key = childSnapshot.key;
+        allKeys.push(key);
+      });
+    })
+    .then(function() {
+      allKeys.forEach(function(key) {
+        console.log('Setting device ' + key + ' elem ' + elem + ' to ' + val);
+          var elemRef = admin.database().ref("strips/" + key + "/" + elem);
+          return elemRef
+            .set(val)
+            .then(function() {
+              console.log('Set device ' + key);
+            });
+        });
+      })
+      .then(function() {
+        console.log('Done setting all devices.');
+      });
+}
+
 app.intent('Enable all', conv => {
   console.log('Enable all intent invoked.');
   var globals = admin.database().ref("globals");
   return globals.set({
     allEnabled: true
   }).then(function() {
-    conv.ask('Okay, all Blinky devices have been enabled.');
+    return setAllDevices('enabled', true)
+    .then(function() {
+      conv.ask('Okay, all Blinky devices have been enabled.');
+    });
   });
 });
 
@@ -35,7 +67,10 @@ app.intent('Disable all', conv => {
   return globals.set({
     allEnabled: false
   }).then(function() {
-    conv.ask('Okay, all Blinky devices have been disabled.');
+    return setAllDevices('enabled', false)
+    .then(function() {
+      conv.ask('Okay, all Blinky devices have been disabled.');
+    });
   });
 });
 
