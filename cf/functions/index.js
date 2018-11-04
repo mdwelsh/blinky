@@ -19,7 +19,7 @@ app.intent('Try me', conv => {
   conv.ask('You wanted to try me. Okay then.');
 });
 
-// Set the given 'elem' on each device  to 'val'.
+// Set the given 'elem' on each device to 'val'.
 function setAllDevices(elem, val) {
   var allKeys = [];
   var stripsQuery = admin.database().ref("strips").orderByKey();
@@ -46,6 +46,28 @@ function setAllDevices(elem, val) {
       .then(function() {
         console.log('Done setting all devices.');
       });
+}
+
+// Set config element elem on device with key to val.
+function setDevice(key, elem, val) {
+  var elemRef = admin.database().ref("strips/" + key + "/" + elem);
+  return elemRef
+    .set(val)
+    .then(function() {
+      console.log('Set device ' + key + ' elem ' + elem + ' to ' + val);
+    });
+}
+
+// Return the key for the device with the given name, or null otherwise.
+function getKey(name) {
+  return getDeviceConfigs().then(function(configs) {
+    for (let config of configs) {
+      if (config.value.name.toLowerCase() == name.toLowerCase()) {
+        return config.key;
+      }
+    }
+    return null;
+  });
 }
 
 // Return list of {key, value} for each device checkin.
@@ -176,6 +198,17 @@ app.intent('Describe', (conv, {deviceName}) => {
       }
     }
     conv.ask(response);
+  });
+});
+
+app.intent('Set mode', (conv, {deviceName}) => {
+  console.log('Set mode invoked with '+deviceName);
+  return getKey(deviceName).then(function(key) {
+    if (deviceName != null) {
+      conv.ask('I found the device named ' + deviceName + ' with key ' + key);
+    } else {
+      conv.ask('I cannot find a device named ' + deviceName);
+    }
   });
 });
 
