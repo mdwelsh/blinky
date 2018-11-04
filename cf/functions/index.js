@@ -48,6 +48,42 @@ function setAllDevices(elem, val) {
       });
 }
 
+// Return list of {key, value} for each device checkin.
+function getDeviceCheckins() {
+  var checkins = [];
+  var checkinsQuery = admin.database().ref("checkin").orderByKey();
+  return checkinsQuery
+    .once("value")
+    .then(function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        var key = childSnapshot.key;
+        var value = childSnapshot.val();
+        checkins.push({key: key, value: value});
+      });
+    })
+    .then(function() {
+      return checkins;
+    });
+}
+
+// Return list of {key, value} for device config.
+function getDeviceConfigs() {
+  var strips = [];
+  var stripsQuery = admin.database().ref("strips").orderByKey();
+  return stripsQuery
+    .once("value")
+    .then(function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        var key = childSnapshot.key;
+        var value = childSnapshot.val();
+        strips.push({key: key, value: value});
+      });
+    })
+    .then(function() {
+      return strips;
+    });
+}
+
 app.intent('Enable all', conv => {
   console.log('Enable all intent invoked.');
   var globals = admin.database().ref("globals");
@@ -96,6 +132,51 @@ app.intent('List devices', conv => {
       console.log('Responding with: ' + response);
       conv.ask(response);
     });
+});
+
+app.intent('Describe', (conv, {deviceName}) => {
+  console.log('Describe intent invoked with '+deviceName);
+  return getDeviceCheckins().then(function(checkins) {
+    console.log('Got ' + checkins.length + ' checkins');
+    console.log(checkins);
+
+    var response = "I'm sorry, but I don't know about the device named "
+      + deviceName + ". Here is the list of devices I know about: ";
+    for (let entry of checkins) {
+      var key = entry.key;
+      var checkin = entry.value;
+      var config = checkin.config;
+      if ('name' in config) {
+        response += config.name + ', ';
+      }
+    }
+    response += '. ';
+
+    for (let entry of checkins) {
+      var key = entry.key;
+      var checkin = entry.value;
+      var config = checkin.config;
+      var ts = checkin.timestamp;
+      var d = new Date(ts);
+
+      if (config.name.toLowerCase() == deviceName.toLowerCase()) {
+        response = 'Here is the configuration for ' + deviceName +'. ';
+        response += deviceName + ' last checked in on ' + d.toDateString() +
+          ' at ' + d.toTimeString() + '. ';
+        response += deviceName + ' has a MAC address of ' + checkin.mac +
+          ' and an IP address of ' + checkin.ip + '. ';
+        response += 'Its current RSSI value is ' + checkin.rssi + ' dBm. ';
+        if (config.enabled) {
+          response += 'This device is enabled. ';
+        } else {
+          response += 'This device is not enabled. ';
+        }
+        response += 'Its current mode is ' + config.mode + '. ';
+        break;
+      }
+    }
+    conv.ask(response);
+  });
 });
 
 exports.dialogFlowApp = functions.https.onRequest(app);
