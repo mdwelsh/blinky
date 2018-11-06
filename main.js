@@ -187,11 +187,23 @@ function editStripStart(id) {
   }
   console.log(config);
 
-  $("#editorNameField").val(config.name);
-  // XXX MDW - Need to fix label overlapping with text.
-  //$("#editorName")[0].MaterialTextField.change();
+  if ('name' in config) {
+    $("#editorNameField").val(config.name);
+  } else {
+    $("#editorNameField").val('');
+  }
   $("#editorModeSelect").val(config.mode);
+  if ('group' in config) {
+    $("#editorModeSelect").val(config.group);
+  } else {
+    $("#editorModeSelect").val('');
+  }
   $("#editorFirmwareSelect").val(config.version);
+
+  // This fixes up the text fields which we tweaked above.
+  $('.mdl-js-textfield').each(function(index, e) {
+    e.MaterialTextfield.checkDirty();
+  });
 
   $("#editorSpeedSlider")[0].MaterialSlider.change(config.speed);
   $("#editorBrightnessSlider")[0].MaterialSlider.change(config.brightness);
@@ -220,9 +232,11 @@ function editStripDone(id, editAll) {
   var numPixels;
   if (editAll) {
     name = strip.nextConfig.name;
+    group = strip.nextConfig.group;
     numPixels = strip.curConfig.numPixels;
   } else {
     name = $("#editorNameField").val();
+    group = $("#editorGroupField").val();
     numPixels = parseInt($("#editorNumPixelsSlider").val());
   }
     
@@ -240,6 +254,7 @@ function editStripDone(id, editAll) {
     enabled: enabled,
     version: version,
     name: name,
+    group: group,
     mode: mode,
     speed: speed,
     brightness: brightness,
