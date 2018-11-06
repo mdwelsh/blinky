@@ -93,6 +93,15 @@ function initEditor() {
     var id = $("#editorStripId").text();
     editStripDone(id, false);
   });
+  $('#editorSaveGroup').click(function (e) {
+    $("#editor").get()[0].close();
+    group = $("#editorGroupField").val();
+    $.each(allStrips, function(id, strip) {
+      if (strip.curConfig.group == group) {
+        editStripDone(id, true);
+      }
+    });
+  });
   $('#editorSaveAll').click(function (e) {
     $("#editor").get()[0].close();
     $.each(allStrips, function(id, strip) {
@@ -215,8 +224,9 @@ function editStripStart(id) {
   refreshSwatch();
 }
 
-// Called when editing done.
-function editStripDone(id, editAll) {
+// Called when editing done. editMulti is true when multiple strips
+// being edited at the same time.
+function editStripDone(id, editMulti) {
   var strip = allStrips[id];
   if (strip == null) {
     console.log("Can't edit unknown strip: " + id);
@@ -229,7 +239,7 @@ function editStripDone(id, editAll) {
   // with the editor's values.
   var name;
   var numPixels;
-  if (editAll) {
+  if (editMulti) {
     name = strip.nextConfig.name;
     group = strip.nextConfig.group;
     numPixels = strip.curConfig.numPixels;
