@@ -185,7 +185,6 @@ function editStripStart(id) {
   } else {
     config = strip.nextConfig;
   }
-  console.log(config);
 
   if ('name' in config) {
     $("#editorNameField").val(config.name);
@@ -194,9 +193,9 @@ function editStripStart(id) {
   }
   $("#editorModeSelect").val(config.mode);
   if ('group' in config) {
-    $("#editorModeSelect").val(config.group);
+    $("#editorGroupField").val(config.group);
   } else {
-    $("#editorModeSelect").val('');
+    $("#editorGroupField").val('');
   }
   $("#editorFirmwareSelect").val(config.version);
 
@@ -684,6 +683,7 @@ function updateStrip(id, stripdata) {
   } else {
     $(e).find("#nextMode").addClass('pending');
   }
+  $(e).find('#group').text(stripdata.config.group);
   $(e).find('#ip').text(stripdata.ip);
   $(e).find('#version').text(stripdata.version);
   $(e).find('#rssi').text(stripdata.rssi + ' dBm');
@@ -786,6 +786,14 @@ function createStrip(id) {
     .appendTo(statusArea);
   $('<div/>')
     .attr('id', 'name')
+    .text('unknown')
+    .appendTo(statusArea);
+
+  $('<div/>')
+    .text('Group')
+    .appendTo(statusArea);
+  $('<div/>')
+    .attr('id', 'group')
     .text('unknown')
     .appendTo(statusArea);
 
