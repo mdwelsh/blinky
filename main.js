@@ -93,6 +93,15 @@ function initEditor() {
     var id = $("#editorStripId").text();
     editStripDone(id, false);
   });
+  $('#editorSaveGroup').click(function (e) {
+    $("#editor").get()[0].close();
+    group = $("#editorGroupField").val();
+    $.each(allStrips, function(id, strip) {
+      if (strip.curConfig.group == group) {
+        editStripDone(id, true);
+      }
+    });
+  });
   $('#editorSaveAll').click(function (e) {
     $("#editor").get()[0].close();
     $.each(allStrips, function(id, strip) {
@@ -185,13 +194,24 @@ function editStripStart(id) {
   } else {
     config = strip.nextConfig;
   }
-  console.log(config);
 
-  $("#editorNameField").val(config.name);
-  // XXX MDW - Need to fix label overlapping with text.
-  //$("#editorName")[0].MaterialTextField.change();
+  if ('name' in config) {
+    $("#editorNameField").val(config.name);
+  } else {
+    $("#editorNameField").val('');
+  }
   $("#editorModeSelect").val(config.mode);
+  if ('group' in config) {
+    $("#editorGroupField").val(config.group);
+  } else {
+    $("#editorGroupField").val('');
+  }
   $("#editorFirmwareSelect").val(config.version);
+
+  // This fixes up the text fields which we tweaked above.
+  $('.mdl-js-textfield').each(function(index, e) {
+    e.MaterialTextfield.checkDirty();
+  });
 
   $("#editorSpeedSlider")[0].MaterialSlider.change(config.speed);
   $("#editorBrightnessSlider")[0].MaterialSlider.change(config.brightness);
@@ -204,8 +224,9 @@ function editStripStart(id) {
   refreshSwatch();
 }
 
-// Called when editing done.
-function editStripDone(id, editAll) {
+// Called when editing done. editMulti is true when multiple strips
+// being edited at the same time.
+function editStripDone(id, editMulti) {
   var strip = allStrips[id];
   if (strip == null) {
     console.log("Can't edit unknown strip: " + id);
@@ -218,11 +239,13 @@ function editStripDone(id, editAll) {
   // with the editor's values.
   var name;
   var numPixels;
-  if (editAll) {
+  if (editMulti) {
     name = strip.nextConfig.name;
+    group = strip.nextConfig.group;
     numPixels = strip.curConfig.numPixels;
   } else {
     name = $("#editorNameField").val();
+    group = $("#editorGroupField").val();
     numPixels = parseInt($("#editorNumPixelsSlider").val());
   }
     
@@ -240,6 +263,7 @@ function editStripDone(id, editAll) {
     enabled: enabled,
     version: version,
     name: name,
+    group: group,
     mode: mode,
     speed: speed,
     brightness: brightness,
@@ -669,6 +693,7 @@ function updateStrip(id, stripdata) {
   } else {
     $(e).find("#nextMode").addClass('pending');
   }
+  $(e).find('#group').text(stripdata.config.group);
   $(e).find('#ip').text(stripdata.ip);
   $(e).find('#version').text(stripdata.version);
   $(e).find('#rssi').text(stripdata.rssi + ' dBm');
@@ -771,6 +796,14 @@ function createStrip(id) {
     .appendTo(statusArea);
   $('<div/>')
     .attr('id', 'name')
+    .text('unknown')
+    .appendTo(statusArea);
+
+  $('<div/>')
+    .text('Group')
+    .appendTo(statusArea);
+  $('<div/>')
+    .attr('id', 'group')
     .text('unknown')
     .appendTo(statusArea);
 
