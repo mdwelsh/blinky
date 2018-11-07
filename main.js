@@ -209,8 +209,6 @@ function editStripStart(id) {
   } else {
     $("#editorGroupField").val('');
   }
-  console.log('MDW:');
-  console.log(config);
   $("#editorFirmwareSelect").val(config.version);
 
   // This fixes up the text fields which we tweaked above.
@@ -666,11 +664,6 @@ function stripCheckin(snapshot) {
 
 // Update the local strip state with the received data from checkin.
 function updateStrip(id, stripdata) {
-  console.log('MDW - updateStrip called');
-  console.log(id);
-  console.log(stripdata);
-
-
   var strip = allStrips[id];
   if (strip == null) {
     // This is a new strip.
@@ -703,8 +696,6 @@ function updateStrip(id, stripdata) {
   } else {
     $(e).find("#nextMode").addClass('pending');
   }
-  console.log('MDW: updateStrip: stripdata config ' + ('config' in stripdata));
-  console.log('MDW: updateStrip: stripdata group ' + ('group' in stripdata.config));
   if ('config' in stripdata && 'group' in stripdata.config) {
     $(e).find('#group').text(stripdata.config.group);
   }
