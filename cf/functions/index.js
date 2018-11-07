@@ -201,13 +201,15 @@ app.intent('Describe', (conv, {deviceName}) => {
   });
 });
 
-app.intent('Set mode', (conv, {deviceName}) => {
-  console.log('Set mode invoked with '+deviceName);
+app.intent('Set mode', (conv, {deviceName, mode}) => {
+  console.log('Set mode invoked with ' + deviceName + ' and mode '+ mode);
   return getKey(deviceName).then(function(key) {
-    if (deviceName != null) {
-      conv.ask('I found the device named ' + deviceName + ' with key ' + key);
+    if (key != null) {
+      return setDevice(key, 'mode', mode).then(function() {
+        conv.ask('Okay, I set ' + deviceName + ' to ' + mode + '.');
+      });
     } else {
-      conv.ask('I cannot find a device named ' + deviceName);
+      conv.ask('I cannot find a device named ' + deviceName + '.');
     }
   });
 });
