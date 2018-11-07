@@ -79,9 +79,12 @@ function initEditor() {
 
   $("#editorSpeedSlider").change(refreshSwatch);
   $("#editorBrightnessSlider").change(refreshSwatch);
-  $("#red").change(refreshSwatch);
-  $("#green").change(refreshSwatch);
-  $("#blue").change(refreshSwatch);
+  $("#red1").change(refreshSwatch);
+  $("#green1").change(refreshSwatch);
+  $("#blue1").change(refreshSwatch);
+  $("#red2").change(refreshSwatch);
+  $("#green2").change(refreshSwatch);
+  $("#blue2").change(refreshSwatch);
   $("#editorColorChangeSlider").change(refreshSwatch);
   $("#editorNumPixelsSlider").change(refreshSwatch);
 
@@ -220,9 +223,12 @@ function editStripStart(id) {
   $("#editorBrightnessSlider")[0].MaterialSlider.change(config.brightness);
   $("#editorColorChangeSlider")[0].MaterialSlider.change(config.colorChange);
   $("#editorNumPixelsSlider")[0].MaterialSlider.change(config.numPixels);
-  $("#red")[0].MaterialSlider.change(config.red);
-  $("#green")[0].MaterialSlider.change(config.green);
-  $("#blue")[0].MaterialSlider.change(config.blue);
+  $("#red1")[0].MaterialSlider.change(config.red);
+  $("#green1")[0].MaterialSlider.change(config.green);
+  $("#blue1")[0].MaterialSlider.change(config.blue);
+  $("#red2")[0].MaterialSlider.change(config.red2);
+  $("#green2")[0].MaterialSlider.change(config.green2);
+  $("#blue2")[0].MaterialSlider.change(config.blue2);
 
   refreshSwatch();
 }
@@ -259,9 +265,12 @@ function editStripDone(id, editMulti) {
   var speed = parseInt($("#editorSpeedSlider").val());
   var brightness = parseInt($("#editorBrightnessSlider").val());
   var colorChange = parseInt($("#editorColorChangeSlider").val());
-  var red = parseInt($("#red").val());
-  var green = parseInt($("#green").val());
-  var blue = parseInt($("#blue").val());
+  var red1 = parseInt($("#red1").val());
+  var green1 = parseInt($("#green1").val());
+  var blue1 = parseInt($("#blue1").val());
+  var red2 = parseInt($("#red2").val());
+  var green2 = parseInt($("#green2").val());
+  var blue2 = parseInt($("#blue2").val());
   var newConfig = {
     enabled: enabled,
     version: version,
@@ -272,9 +281,12 @@ function editStripDone(id, editMulti) {
     brightness: brightness,
     colorChange: colorChange,
     numPixels: numPixels,
-    red: red,
-    green: green,
-    blue: blue,
+    red: red1,
+    green: green1,
+    blue: blue1,
+    red2: red2,
+    green2: green2,
+    blue2: blue2,
   };
   setConfig(id, newConfig);
 }
@@ -295,11 +307,17 @@ function hexFromRGB(r, g, b) {
 }
 
 function refreshSwatch() {
-  var red = parseInt($("#red").val());
-  var green = parseInt($("#green").val());
-  var blue = parseInt($("#blue").val());
-  var hex = hexFromRGB(red, green, blue);
-  $("#swatch").css("background-color", "#" + hex);
+  var red1 = parseInt($("#red1").val());
+  var green1 = parseInt($("#green1").val());
+  var blue1 = parseInt($("#blue1").val());
+  var hex1 = hexFromRGB(red1, green1, blue1);
+  $("#swatch1").css("background-color", "#" + hex1);
+
+  var red2 = parseInt($("#red2").val());
+  var green2 = parseInt($("#green2").val());
+  var blue2 = parseInt($("#blue2").val());
+  var hex2 = hexFromRGB(red2, green2, blue2);
+  $("#swatch2").css("background-color", "#" + hex2);
 
   var speed = $("#editorSpeedSlider").val();
   $("#speedIndicator").text(speed);
@@ -963,6 +981,7 @@ function configToString(config) {
     ", speed: " + config.speed +
     ", bright: " + config.brightness +
     ", color: (" + config.red + "," + config.green + "," + config.blue + ")" +
+    ", color2: (" + config.red2 + "," + config.green2 + "," + config.blue2 + ")" +
     ", color change: " + config.colorChange;
   return s;
 }
