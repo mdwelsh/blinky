@@ -3,6 +3,7 @@
 
 const functions = require('firebase-functions');
 const {dialogflow} = require('actions-on-google');
+const colors = require('./colors');
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
@@ -48,8 +49,34 @@ function setAllDevices(elem, val) {
       });
 }
 
+
+// Return the key for the device with the given name, or null otherwise.
+function getDeviceByName(name) {
+  return getDeviceConfigs().then(function(configs) {
+    for (let config of configs) {
+      if (config.value.name.toLowerCase() == name.toLowerCase()) {
+        return config.key;
+      }
+    }
+    return null;
+  });
+}
+
+// Return the set of keys for all devices matching the given group.
+function getGroup(group) {
+  return getDeviceConfigs().then(function(configs) {
+    var keys = [];
+    for (let config of configs) {
+      if (config.value.group.toLowerCase() == group.toLowerCase()) {
+        keys.push(config.key);
+      }
+    }
+    return keys;
+  });
+}
+
 // Set config element elem on device with key to val.
-function setDevice(key, elem, val) {
+function setDeviceConfigByKey(key, elem, val) {
   var elemRef = admin.database().ref("strips/" + key + "/" + elem);
   return elemRef
     .set(val)
@@ -58,15 +85,27 @@ function setDevice(key, elem, val) {
     });
 }
 
-// Return the key for the device with the given name, or null otherwise.
-function getKey(name) {
-  return getDeviceConfigs().then(function(configs) {
-    for (let config of configs) {
-      if (config.value.name.toLowerCase() == name.toLowerCase()) {
-        return config.key;
-      }
+// Set config element elem on the named device or group to val.
+function setDeviceConfigByNameOrGroup(name, field, fieldVal) {
+  // First try matching a specific device name.
+  return getDeviceByName(name).then(function(key) {
+    if (key != null) {
+      return setDeviceConfigByKey(key, field, fieldVal);
+    } else {
+      // Next try matching a group.
+      return getGroup(name).then(function(keys) {
+        if (keys.length == 0) {
+          return Promise.reject(new Error('No such device or group ' + name));
+        }
+
+        // Run the setDevice promises in parallel.
+        promises = [];
+        for (let key of keys) {
+          promises.push(setDeviceConfigByKey(key, field, fieldVal));
+        }
+        return Promise.all(promises);
+      });
     }
-    return null;
   });
 }
 
@@ -201,17 +240,54 @@ app.intent('Describe', (conv, {deviceName}) => {
   });
 });
 
-app.intent('Set mode', (conv, {deviceName, mode}) => {
-  console.log('Set mode invoked with ' + deviceName + ' and mode '+ mode);
-  return getKey(deviceName).then(function(key) {
-    if (key != null) {
-      return setDevice(key, 'mode', mode).then(function() {
-        conv.ask('Okay, I set ' + deviceName + ' to ' + mode + '.');
-      });
-    } else {
-      conv.ask('I cannot find a device named ' + deviceName + '.');
+app.intent('Set mode', (conv, {deviceName, mode, color}) => {
+  console.log('Set mode intent invoked with '
+    + ' device:' + deviceName
+    + ' mode:' + mode
+    + ' color:' + color);
+
+  if (color != '') {
+    // Set color.
+    var rgb = colors.getColor(color);
+    console.log('Color parsed as ' + JSON.stringify(rgb));
+
+    if (rgb == null) {
+      conv.ask("I don't know the color " + color);
+      return;
     }
-  });
+    var promises = [
+      setDeviceConfigByNameOrGroup(deviceName, 'red', rgb.red),
+      setDeviceConfigByNameOrGroup(deviceName, 'green', rgb.green),
+      setDeviceConfigByNameOrGroup(deviceName, 'blue', rgb.blue),
+    ];
+    return Promise.all(promises)
+      .then(function() {
+        console.log('Set color promises complete');
+        conv.ask('Okay, I set ' + deviceName + ' to the color ' + color);
+      })
+      .catch(function(e) {
+        console.log('Set color promises failed: ' + e);
+        conv.ask(e.message);
+      });
+
+  } else if (mode != '') {
+    // Set mode.
+    console.log('Setting mode: ' + mode);
+    return setDeviceConfigByNameOrGroup(deviceName, 'mode', mode)
+      .then(function() {
+        console.log('Set mode promise complete');
+        conv.ask('Okay, I set ' + deviceName + ' to mode ' + mode);
+      })
+      .catch(function(e) {
+        console.log('Set mode promise failed: ' + e);
+        conv.ask(e.message);
+      });
+
+  } else {
+    conv.ask('You need to specify either a mode name or a color.');
+    return;
+  }
 });
+
 
 exports.dialogFlowApp = functions.https.onRequest(app);
