@@ -240,11 +240,14 @@ app.intent('Describe', (conv, {deviceName}) => {
   });
 });
 
-app.intent('Set mode', (conv, {deviceName, mode, color}) => {
+app.intent('Set mode',
+  (conv, {deviceName, mode, color, brightness, colorChange}) => {
   console.log('Set mode intent invoked with '
     + ' device:' + deviceName
     + ' mode:' + mode
-    + ' color:' + color);
+    + ' color:' + color
+    + ' brightness:' + brightness
+    + ' colorChange:' + colorChange);
 
   if (color != '') {
     // Set color.
@@ -283,8 +286,34 @@ app.intent('Set mode', (conv, {deviceName, mode, color}) => {
         conv.ask(e.message);
       });
 
+  } else if (brightness != '') {
+    // Set brightness.
+    console.log('Setting brightness: ' + brightness);
+    return setDeviceConfigByNameOrGroup(deviceName, 'brightness', brightness)
+      .then(function() {
+        console.log('Set brightness promise complete');
+        conv.ask('Okay, I set ' + deviceName + ' to brightness ' + brightness)
+      })
+      .catch(function(e) {
+        console.log('Set brightness promise failed: ' + e);
+        conv.ask(e.message);
+      });
+
+  } else if (colorChange != '') {
+    // Set colorChange.
+    console.log('Setting colorChange: ' + colorChange);
+    return setDeviceConfigByNameOrGroup(deviceName, 'colorChange', colorChange)
+      .then(function() {
+        console.log('Set colorChange promise complete');
+        conv.ask('Okay, I set ' + deviceName + ' to color change ' + colorChange)
+      })
+      .catch(function(e) {
+        console.log('Set colorChange promise failed: ' + e);
+        conv.ask(e.message);
+      });
+
   } else {
-    conv.ask('You need to specify either a mode name or a color.');
+    conv.ask('You need to specify a mode, color, brightness, or color change value.');
     return;
   }
 });
