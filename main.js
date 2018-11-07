@@ -187,6 +187,9 @@ function editStripStart(id) {
   if (strip.nextConfig == null) {
     if (strip.curConfig == null) {
       console.log("Warning - no cur or next config for strip yet: " + id);
+      $('.mdl-js-textfield').each(function(index, e) {
+        e.MaterialTextfield.checkDirty();
+      });
       return;
     } else {
       config = strip.curConfig;
@@ -206,6 +209,8 @@ function editStripStart(id) {
   } else {
     $("#editorGroupField").val('');
   }
+  console.log('MDW:');
+  console.log(config);
   $("#editorFirmwareSelect").val(config.version);
 
   // This fixes up the text fields which we tweaked above.
@@ -250,7 +255,7 @@ function editStripDone(id, editMulti) {
   }
     
   // Don't change the enabled state when editing.
-  var enabled = strip.curConfig.enabled;
+  var enabled = (strip.curConfig != null && strip.curConfig.enabled);
   var version = $("#editorFirmwareSelect").find(':selected').text();
   var mode = $("#editorModeSelect").find(':selected').text();
   var speed = parseInt($("#editorSpeedSlider").val());
@@ -661,6 +666,11 @@ function stripCheckin(snapshot) {
 
 // Update the local strip state with the received data from checkin.
 function updateStrip(id, stripdata) {
+  console.log('MDW - updateStrip called');
+  console.log(id);
+  console.log(stripdata);
+
+
   var strip = allStrips[id];
   if (strip == null) {
     // This is a new strip.
@@ -693,7 +703,11 @@ function updateStrip(id, stripdata) {
   } else {
     $(e).find("#nextMode").addClass('pending');
   }
-  $(e).find('#group').text(stripdata.config.group);
+  console.log('MDW: updateStrip: stripdata config ' + ('config' in stripdata));
+  console.log('MDW: updateStrip: stripdata group ' + ('group' in stripdata.config));
+  if ('config' in stripdata && 'group' in stripdata.config) {
+    $(e).find('#group').text(stripdata.config.group);
+  }
   $(e).find('#ip').text(stripdata.ip);
   $(e).find('#version').text(stripdata.version);
   $(e).find('#rssi').text(stripdata.rssi + ' dBm');
@@ -976,7 +990,9 @@ function configUpdate(snapshot) {
   strip.nextConfig = nextConfig;
 
   // Update UI to reflect received config.
-  $(e).find("#name").text(nextConfig.name);
+  if (nextConfig != null && 'name' in nextConfig) {
+    $(e).find("#name").text(nextConfig.name);
+  }
   var nme = $(e).find("#nextMode");
   $(nme).text(configToString(nextConfig));
   if (JSON.stringify(strip.curConfig) === JSON.stringify(nextConfig)) {
@@ -986,7 +1002,7 @@ function configUpdate(snapshot) {
   }
 
   var enabled = $(e).find("#strip-enable-"+safeIdString(stripid))[0].parentElement.MaterialSwitch;
-  if (nextConfig.enabled) {
+  if (nextConfig != null && nextConfig.enabled) {
     enabled.on();
   } else {
     enabled.off();
