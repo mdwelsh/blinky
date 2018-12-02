@@ -241,82 +241,76 @@ app.intent('Describe', (conv, {deviceName}) => {
 });
 
 app.intent('Set mode',
-  (conv, {deviceName, mode, color, brightness, colorChange}) => {
-  console.log('Set mode intent invoked with '
-    + ' device:' + deviceName
-    + ' mode:' + mode
-    + ' color:' + color
-    + ' brightness:' + brightness
-    + ' colorChange:' + colorChange);
+  (conv, {deviceName, mode}) => {
+  console.log('Set mode intent invoked with device:' + deviceName + ', mode: ' + mode);
 
-  if (color != '') {
-    // Set color.
-    var rgb = colors.getColor(color);
-    console.log('Color parsed as ' + JSON.stringify(rgb));
-
-    if (rgb == null) {
-      conv.ask("I don't know the color " + color);
-      return;
-    }
-    var promises = [
-      setDeviceConfigByNameOrGroup(deviceName, 'red', rgb.red),
-      setDeviceConfigByNameOrGroup(deviceName, 'green', rgb.green),
-      setDeviceConfigByNameOrGroup(deviceName, 'blue', rgb.blue),
-    ];
-    return Promise.all(promises)
-      .then(function() {
-        console.log('Set color promises complete');
-        conv.ask('Okay, I set ' + deviceName + ' to the color ' + color);
-      })
-      .catch(function(e) {
-        console.log('Set color promises failed: ' + e);
-        conv.ask(e.message);
-      });
-
-  } else if (mode != '') {
-    // Set mode.
-    console.log('Setting mode: ' + mode);
-    return setDeviceConfigByNameOrGroup(deviceName, 'mode', mode)
-      .then(function() {
-        console.log('Set mode promise complete');
-        conv.ask('Okay, I set ' + deviceName + ' to mode ' + mode);
-      })
-      .catch(function(e) {
-        console.log('Set mode promise failed: ' + e);
-        conv.ask(e.message);
-      });
-
-  } else if (brightness != '') {
-    // Set brightness.
-    console.log('Setting brightness: ' + brightness);
-    return setDeviceConfigByNameOrGroup(deviceName, 'brightness', brightness)
-      .then(function() {
-        console.log('Set brightness promise complete');
-        conv.ask('Okay, I set ' + deviceName + ' to brightness ' + brightness)
-      })
-      .catch(function(e) {
-        console.log('Set brightness promise failed: ' + e);
-        conv.ask(e.message);
-      });
-
-  } else if (colorChange != '') {
-    // Set colorChange.
-    console.log('Setting colorChange: ' + colorChange);
-    return setDeviceConfigByNameOrGroup(deviceName, 'colorChange', colorChange)
-      .then(function() {
-        console.log('Set colorChange promise complete');
-        conv.ask('Okay, I set ' + deviceName + ' to color change ' + colorChange)
-      })
-      .catch(function(e) {
-        console.log('Set colorChange promise failed: ' + e);
-        conv.ask(e.message);
-      });
-
-  } else {
-    conv.ask('You need to specify a mode, color, brightness, or color change value.');
-    return;
-  }
+  return setDeviceConfigByNameOrGroup(deviceName, 'mode', mode)
+    .then(function() {
+      console.log('Set mode promise complete');
+      conv.ask('Okay, I set ' + deviceName + ' to mode ' + mode);
+    })
+    .catch(function(e) {
+      console.log('Set mode promise failed: ' + e);
+      conv.ask(e.message);
+    });
 });
 
+app.intent('Set color',
+  (conv, {deviceName, color}) => {
+  console.log('Set color intent invoked with device:' + deviceName + ', color: ' + color);
+
+  var rgb = colors.getColor(color);
+  console.log('Color parsed as ' + JSON.stringify(rgb));
+
+  if (rgb == null) {
+    conv.ask("I don't know the color " + color);
+    return;
+  }
+  var promises = [
+    setDeviceConfigByNameOrGroup(deviceName, 'red', rgb.red),
+    setDeviceConfigByNameOrGroup(deviceName, 'green', rgb.green),
+    setDeviceConfigByNameOrGroup(deviceName, 'blue', rgb.blue),
+  ];
+  return Promise.all(promises)
+    .then(function() {
+      console.log('Set color promises complete');
+      conv.ask('Okay, I set ' + deviceName + ' to the color ' + color);
+    })
+    .catch(function(e) {
+      console.log('Set color promises failed: ' + e);
+      conv.ask(e.message);
+    });
+});
+
+app.intent('Set brightness',
+  (conv, {deviceName, brightness}) => {
+  console.log('Set brightness intent invoked with device:' + deviceName + ', brightness: ' + brightness);
+
+  return setDeviceConfigByNameOrGroup(deviceName, 'brightness', brightness)
+    .then(function() {
+      console.log('Set brightness promise complete');
+      conv.ask('Okay, I set ' + deviceName + ' to brightness ' + brightness)
+    })
+    .catch(function(e) {
+      console.log('Set brightness promise failed: ' + e);
+      conv.ask(e.message);
+    });
+});
+
+app.intent('Set colorChange',
+  (conv, {deviceName, colorChange}) => {
+  console.log('Set colorChange intent invoked with device:' + deviceName + ', colorChange: ' + colorChange);
+
+  console.log('Setting colorChange: ' + colorChange);
+  return setDeviceConfigByNameOrGroup(deviceName, 'colorChange', colorChange)
+    .then(function() {
+      console.log('Set colorChange promise complete');
+      conv.ask('Okay, I set ' + deviceName + ' to color change ' + colorChange)
+    })
+    .catch(function(e) {
+      console.log('Set colorChange promise failed: ' + e);
+      conv.ask(e.message);
+    });
+});
 
 exports.dialogFlowApp = functions.https.onRequest(app);
