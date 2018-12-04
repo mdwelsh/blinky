@@ -37,9 +37,14 @@ var allmodes = [
   'rain',
   'snow',
   'sparkle',
+  'shimmer',
+  'twinkle',
   'halloween',
-  'christmas',
   'comet',
+  'christmas',
+  'christmasBoring',
+  'christmasRandom',
+  'christmasRainbow',
 ];
 
 // Global variables to be maintained in Firebase.
