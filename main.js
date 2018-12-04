@@ -38,6 +38,7 @@ var allmodes = [
   'snow',
   'sparkle',
   'halloween',
+  'christmas',
   'comet',
 ];
 
