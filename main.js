@@ -32,6 +32,7 @@ var allmodes = [
   'sparkle',
   'shimmer',
   'twinkle',
+  'runner',
   'christmas',
 ];
 
